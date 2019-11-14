@@ -9,9 +9,9 @@ import com.google.inject.Singleton
 class GameAssetManager @Inject constructor() {
 
     companion object {
-        private val playerFile = "ball_single.png"
-        private val platformFile = "platform_green.png"
-        private val coinFile = "coin.png"
+        private const val playerFile = "ball_single.png"
+        private const val platformFile = "platform_green_resized.png"
+        private const val coinFile = "coin.png"
     }
 
     private val assetManager: AssetManager = AssetManager()
@@ -20,6 +20,8 @@ class GameAssetManager @Inject constructor() {
         assetManager.load(playerFile, Texture::class.java)
         assetManager.load(platformFile, Texture::class.java)
         assetManager.load(coinFile, Texture::class.java)
+
+        assetManager.finishLoading()
     }
 
     fun playerSprite(): Texture {

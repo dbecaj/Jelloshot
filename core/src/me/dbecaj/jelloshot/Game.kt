@@ -35,6 +35,8 @@ class Game : ApplicationAdapter() {
         Gdx.input.inputProcessor = injector.getInstance(MyInputAdapter::class.java)
 
         gameWorld = injector.getInstance(GameWorld::class.java)
+        gameWorld.createPlatform(Vector2(5F, 3F))
+        gameWorld.createPlayer(Vector2(5F, 5F))
     }
 
     override fun render() {
