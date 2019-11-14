@@ -15,10 +15,16 @@ import com.badlogic.gdx.physics.box2d.World
 import com.google.inject.Guice
 import com.google.inject.Inject
 import me.dbecaj.jelloshot.core.DisposalClass
+import me.dbecaj.jelloshot.core.GameWorld
+import me.dbecaj.jelloshot.core.toVector2
 
 class Game : ApplicationAdapter() {
     private lateinit var engine: Engine
     private lateinit var disposal: DisposalClass
+
+    companion object {
+        lateinit var gameWorld: GameWorld
+    }
 
     override fun create() {
         // Initialize injector
@@ -27,6 +33,8 @@ class Game : ApplicationAdapter() {
         disposal = injector.getInstance(DisposalClass::class.java)
 
         Gdx.input.inputProcessor = injector.getInstance(MyInputAdapter::class.java)
+
+        gameWorld = injector.getInstance(GameWorld::class.java)
     }
 
     override fun render() {
@@ -41,24 +49,13 @@ class Game : ApplicationAdapter() {
     }
 }
 
-class MyInputAdapter @Inject constructor(private val camera: OrthographicCamera,
-                                         private val engine: Engine,
-                                         private val world: World) : InputAdapter() {
+class MyInputAdapter @Inject constructor(
+        private val camera: OrthographicCamera
+) : InputAdapter() {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         val worldPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F))
-        engine.addEntity(Entity().apply {
-            add(TransformComponent(Vector2(worldPos.x, worldPos.y), 0F, 0.25F))
-
-            val body = world.createBody(BodyDef().apply {
-                type = BodyDef.BodyType.DynamicBody
-            })
-            body.createFixture(PolygonShape().apply {
-                setAsBox(1F, 1F)
-            }, 1.0F)
-            body.setTransform(transform.position, 0F)
-            add(PhysicsComponent(body))
-        })
+        Game.gameWorld.createBox(worldPos.toVector2)
 
         return true;
     }
