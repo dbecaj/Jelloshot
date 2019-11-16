@@ -7,6 +7,9 @@ import com.badlogic.gdx.math.Vector3
 val Int.pixelsToMeters: Float
     get() = this / 32F
 
+val Float.pixelsToMeters: Float
+    get() = this / 32F
+
 val Float.toDegrees : Float
     get() = MathUtils.radiansToDegrees * this
 

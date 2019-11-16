@@ -36,11 +36,12 @@ class Game : ApplicationAdapter() {
 
         gameWorld = injector.getInstance(GameWorld::class.java)
         gameWorld.createPlatform(Vector2(5F, 3F))
-        gameWorld.createPlayer(Vector2(5F, 5F))
+        gameWorld.createPlayer(Vector2(5F, 10F))
     }
 
     override fun render() {
-        Gdx.gl.glClearColor(0.53f, 0.81f, 235f, 0.92f)
+        //Gdx.gl.glClearColor(0.53f, 0.81f, 235f, 0.92f)
+        Gdx.gl.glClearColor(0F, 0F, 0F, 1F)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         engine.update(Gdx.graphics.deltaTime)

@@ -39,7 +39,7 @@ class GameModule : AbstractModule() {
         // We add our systems here in order we want them to process entities in
         sequenceOf(
                 PhysicsSystem::class.java,
-                PhysicsSynchronizationSystem::class.java,
+                //PhysicsSynchronizationSystem::class.java,
                 RenderingSystem::class.java,
                 PhysicsDebugSystem::class.java
         ).map { injector.getInstance(it) }
