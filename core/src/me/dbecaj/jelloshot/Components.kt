@@ -41,6 +41,13 @@ class PickupComponent(): Component {
 val Entity.pickup: PickupComponent
     get() = PickupComponent[this]
 
+class PlayerComponent(): Component {
+    companion object : ComponentResolver<PlayerComponent>(PlayerComponent::class.java)
+}
+
+val Entity.player: PlayerComponent
+    get() = PlayerComponent[this]
+
 open class ComponentResolver<T: Component>(componentClass: Class<T>) {
     val MAPPER = ComponentMapper.getFor(componentClass)
     operator fun get(entity: Entity) = MAPPER.get(entity)

@@ -24,6 +24,7 @@ class GameWorld @Inject constructor(
         val entity = Entity().apply {
             //add(TextureRegionComponent(TextureRegion(assetManager.playerSprite())))
             add(TransformComponent(position, 0F, 0.25F))
+            add(PlayerComponent())
 
             val NUM_SEGMENTS = 40
             val RADIUS = 80F

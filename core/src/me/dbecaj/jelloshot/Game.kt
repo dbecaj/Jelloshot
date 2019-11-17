@@ -16,6 +16,7 @@ import com.google.inject.Guice
 import com.google.inject.Inject
 import me.dbecaj.jelloshot.core.DisposalClass
 import me.dbecaj.jelloshot.core.GameWorld
+import me.dbecaj.jelloshot.core.LevelBuilder
 import me.dbecaj.jelloshot.core.toVector2
 
 class Game : ApplicationAdapter() {
@@ -32,11 +33,13 @@ class Game : ApplicationAdapter() {
         engine = injector.getInstance(Engine::class.java)
         disposal = injector.getInstance(DisposalClass::class.java)
 
-        Gdx.input.inputProcessor = injector.getInstance(MyInputAdapter::class.java)
+        //Gdx.input.inputProcessor = injector.getInstance(MyInputAdapter::class.java)
 
         gameWorld = injector.getInstance(GameWorld::class.java)
-        gameWorld.createPlatform(Vector2(5F, 3F))
         gameWorld.createPlayer(Vector2(5F, 10F))
+
+        val levelBuilder = injector.getInstance(LevelBuilder::class.java)
+        levelBuilder.initialize()
     }
 
     override fun render() {

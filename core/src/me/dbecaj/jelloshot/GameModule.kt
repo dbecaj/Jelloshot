@@ -14,10 +14,7 @@ import com.google.inject.Injector
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.pixelsToMeters
-import me.dbecaj.jelloshot.system.PhysicsDebugSystem
-import me.dbecaj.jelloshot.system.PhysicsSynchronizationSystem
-import me.dbecaj.jelloshot.system.PhysicsSystem
-import me.dbecaj.jelloshot.system.RenderingSystem
+import me.dbecaj.jelloshot.system.*
 
 class GameModule : AbstractModule() {
 
@@ -38,8 +35,9 @@ class GameModule : AbstractModule() {
 
         // We add our systems here in order we want them to process entities in
         sequenceOf(
+                PlayerControllerSystem::class.java,
                 PhysicsSystem::class.java,
-                //PhysicsSynchronizationSystem::class.java,
+                PhysicsSynchronizationSystem::class.java,
                 RenderingSystem::class.java,
                 PhysicsDebugSystem::class.java
         ).map { injector.getInstance(it) }
