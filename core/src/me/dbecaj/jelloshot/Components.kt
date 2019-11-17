@@ -42,11 +42,18 @@ val Entity.pickup: PickupComponent
     get() = PickupComponent[this]
 
 class PlayerComponent(): Component {
+    var groundCollision = 0
+        set(value) {
+            println(value)
+            field = value
+            if (field < 0) field = 0
+        }
+
+    var isOnGround = false
+        get() = groundCollision > 0
+
     companion object : ComponentResolver<PlayerComponent>(PlayerComponent::class.java)
 }
-
-val Entity.player: PlayerComponent
-    get() = PlayerComponent[this]
 
 open class ComponentResolver<T: Component>(componentClass: Class<T>) {
     val MAPPER = ComponentMapper.getFor(componentClass)

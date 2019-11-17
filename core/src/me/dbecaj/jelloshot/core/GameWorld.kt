@@ -26,17 +26,18 @@ class GameWorld @Inject constructor(
             add(TransformComponent(position, 0F, 0.25F))
             add(PlayerComponent())
 
-            val NUM_SEGMENTS = 40
+            val NUM_SEGMENTS = 30
             val RADIUS = 80F
 
             val center = Vector2(position)
             val fixtureDef = FixtureDef().apply {
-                shape = CircleShape().apply { radius = 0.1F }
+                shape = CircleShape().apply { radius = 0.3F }
                 density = 0.1F
-                restitution = 0.05F
+                restitution = 1F
                 friction = 1F
             }
 
+            // Create outer circles
             val deltaAngle = (2F * Math.PI) / NUM_SEGMENTS
             val bodies = mutableListOf<Body>()
             for (i in 0 until NUM_SEGMENTS) {
@@ -54,8 +55,11 @@ class GameWorld @Inject constructor(
                     type = BodyDef.BodyType.DynamicBody
                     this.position.set(circlePosition.add(center))
                 })
-                body.createFixture(fixtureDef)
+                body.createFixture(fixtureDef).apply {
+                    userData = "outerCircle"
+                }
 
+                body.userData = this
                 bodies.add(body)
             }
 
@@ -65,7 +69,9 @@ class GameWorld @Inject constructor(
                 type = BodyDef.BodyType.DynamicBody
             })
             innerCircleBody.createFixture(fixtureDef.apply {
-                shape = CircleShape().apply { radius = 0.8F }
+                shape = CircleShape().apply {
+                    radius = 0.8F
+                    density = 0.5F                }
             })
 
             // Connect the joints

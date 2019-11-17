@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.physics.box2d.*
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.google.inject.Provides
@@ -25,7 +25,47 @@ class GameModule : AbstractModule() {
         }
 
         // We could put some listeners for physics world here
-        bind(World::class.java).toInstance(World(Vector2(0F, -9.81F), true))
+        bind(World::class.java).toInstance(World(Vector2(0F, -9.81F), true).apply {
+            // Setup contact listener
+            this.setContactListener(object : ContactListener {
+                override fun beginContact(contact: Contact) {
+                    val userDataA = contact.fixtureA.userData as? String
+                    val userDataB = contact.fixtureB.userData as? String
+                    if (userDataA == "outerCircle") {
+                        putOnGround(contact.fixtureA, true)
+                    } else if (userDataB == "outerCircle") {
+                        putOnGround(contact.fixtureB, true)
+                    }
+
+                }
+
+                override fun endContact(contact: Contact) {
+                    val userDataA = contact.fixtureA.userData as? String
+                    val userDataB = contact.fixtureB.userData as? String
+                    if (userDataA == "outerCircle") {
+                        putOnGround(contact.fixtureA, false)
+                    } else if (userDataB == "outerCircle") {
+                        putOnGround(contact.fixtureB, false)
+                    }
+                }
+
+                private fun putOnGround(fixture: Fixture, isOnGround: Boolean) {
+                    val entity = fixture.body.userData as Entity
+                    if (isOnGround) {
+                        entity.getComponent(PlayerComponent::class.java).groundCollision++
+                    }
+                    else {
+                        entity.getComponent(PlayerComponent::class.java).groundCollision--
+                    }
+
+                    //println("groundCollsion: ${entity.getComponent(PlayerComponent::class.java).groundCollision}")
+                }
+
+                override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
+
+                override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
+            })
+        })
         bind(SpriteBatch::class.java).toInstance(SpriteBatch())
     }
 
