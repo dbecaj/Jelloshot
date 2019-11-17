@@ -31,20 +31,19 @@ class GameModule : AbstractModule() {
                 override fun beginContact(contact: Contact) {
                     val userDataA = contact.fixtureA.userData as? String
                     val userDataB = contact.fixtureB.userData as? String
-                    if (userDataA == "outerCircle") {
+                    if (userDataA == "outerCircle" && userDataB != "outerCircle") {
                         putOnGround(contact.fixtureA, true)
-                    } else if (userDataB == "outerCircle") {
+                    } else if (userDataB == "outerCircle" && userDataA != "outerCircle") {
                         putOnGround(contact.fixtureB, true)
                     }
-
                 }
 
                 override fun endContact(contact: Contact) {
                     val userDataA = contact.fixtureA.userData as? String
                     val userDataB = contact.fixtureB.userData as? String
-                    if (userDataA == "outerCircle") {
+                    if (userDataA == "outerCircle" && userDataB != "outerCircle") {
                         putOnGround(contact.fixtureA, false)
-                    } else if (userDataB == "outerCircle") {
+                    } else if (userDataB == "outerCircle" && userDataA != "outerCircle") {
                         putOnGround(contact.fixtureB, false)
                     }
                 }
@@ -57,8 +56,6 @@ class GameModule : AbstractModule() {
                     else {
                         entity.getComponent(PlayerComponent::class.java).groundCollision--
                     }
-
-                    //println("groundCollsion: ${entity.getComponent(PlayerComponent::class.java).groundCollision}")
                 }
 
                 override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}

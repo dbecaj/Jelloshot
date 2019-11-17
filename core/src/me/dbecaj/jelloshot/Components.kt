@@ -44,7 +44,6 @@ val Entity.pickup: PickupComponent
 class PlayerComponent(): Component {
     var groundCollision = 0
         set(value) {
-            println(value)
             field = value
             if (field < 0) field = 0
         }
