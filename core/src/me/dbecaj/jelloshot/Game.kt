@@ -38,6 +38,7 @@ class Game : ApplicationAdapter() {
         gameWorld = injector.getInstance(GameWorld::class.java)
         gameWorld.createPlayer(Vector2(5F, 10F))
         gameWorld.createPlatform(Vector2(20F, 7F))
+        gameWorld.createCoin(Vector2(30F, 10F))
 
         val levelBuilder = injector.getInstance(LevelBuilder::class.java)
         levelBuilder.initialize()

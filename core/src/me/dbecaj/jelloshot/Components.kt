@@ -34,13 +34,6 @@ class PhysicsComponent(val body: Body) : Component {
 val Entity.physics: PhysicsComponent
     get() = PhysicsComponent[this]
 
-class PickupComponent(): Component {
-    companion object : ComponentResolver<PickupComponent>(PickupComponent::class.java)
-}
-
-val Entity.pickup: PickupComponent
-    get() = PickupComponent[this]
-
 class PlayerComponent(): Component {
     var groundCollision = 0
         set(value) {
@@ -53,6 +46,26 @@ class PlayerComponent(): Component {
 
     companion object : ComponentResolver<PlayerComponent>(PlayerComponent::class.java)
 }
+
+enum class EntityType {
+    PLAYER,
+    COIN,
+    PLATFORM,
+}
+
+class EntityTypeComponent(val entityType: EntityType) : Component {
+    companion object : ComponentResolver<EntityTypeComponent>(EntityTypeComponent::class.java)
+}
+
+val Entity.entityType: EntityTypeComponent
+    get() = EntityTypeComponent[this]
+
+class CollisionComponent(var collisionEntity: Entity?): Component {
+    companion object : ComponentResolver<CollisionComponent>(CollisionComponent::class.java)
+}
+
+val Entity.collision: CollisionComponent
+    get() = CollisionComponent[this]
 
 open class ComponentResolver<T: Component>(componentClass: Class<T>) {
     val MAPPER = ComponentMapper.getFor(componentClass)

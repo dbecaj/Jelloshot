@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef
-import com.badlogic.gdx.physics.box2d.joints.PulleyJointDef
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
@@ -55,9 +54,7 @@ class GameWorld @Inject constructor(
                     type = BodyDef.BodyType.DynamicBody
                     this.position.set(circlePosition.add(center))
                 })
-                body.createFixture(fixtureDef).apply {
-                    userData = "outerCircle"
-                }
+                body.createFixture(fixtureDef)
 
                 body.userData = this
                 bodies.add(body)
@@ -73,6 +70,7 @@ class GameWorld @Inject constructor(
                     radius = 0.8F
                     density = 0.5F                }
             })
+            innerCircleBody.userData = this
 
             // Connect the joints
             for (i in 0 until NUM_SEGMENTS) {
@@ -93,21 +91,17 @@ class GameWorld @Inject constructor(
                 // Connect the center circle with other circles
                 world.createJoint(DistanceJointDef().apply {
                     this.initialize(currentBody, innerCircleBody, currentBody.worldCenter, center)
-                    frequencyHz = 2.0F
+                    frequencyHz = 3.0F
                     dampingRatio = 0.5F
                     collideConnected = true
                 })
             }
 
-            /*val body = world.createBody(BodyDef().apply {
-                type = BodyDef.BodyType.DynamicBody
-            })
-            body.createFixture(CircleShape().apply {
-                radius = 1F
-            }, 1.0F)*/
-
             innerCircleBody.setTransform(transform.position, 0F)
             add(PhysicsComponent(innerCircleBody))
+
+            add(EntityTypeComponent(EntityType.PLAYER))
+            add(CollisionComponent(null))
         }
 
         engine.addEntity(entity)
@@ -126,7 +120,34 @@ class GameWorld @Inject constructor(
                 setAsBox(4F, 0.9F)
             }, 1.0F)
             body.setTransform(transform.position, 0F)
+            body.userData = this
             add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.PLATFORM))
+            add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
+    fun createCoin(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(TextureRegion(assetManager.coinSprite())))
+            add(TransformComponent(position, 0F, 0.12F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.StaticBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(1F, 1F)
+            }, 0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.COIN))
+            add(CollisionComponent(null))
         }
 
         engine.addEntity(entity)

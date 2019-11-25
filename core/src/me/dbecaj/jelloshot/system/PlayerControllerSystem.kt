@@ -54,8 +54,8 @@ class PlayerControllerSystem @Inject constructor(
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
-        if (move && playerComponent.isOnGround) {
-            val movementVector = startDragPos.sub(endDragPos).scl(400F)
+        if (move) { //&& playerComponent.isOnGround) {
+            val movementVector = startDragPos.sub(endDragPos).scl(800F)
             println("movementVector: $movementVector")
             entity.physics.body.applyForceToCenter(movementVector, true)
         }

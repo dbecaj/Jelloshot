@@ -25,26 +25,43 @@ class GameModule : AbstractModule() {
         }
 
         // We could put some listeners for physics world here
-        bind(World::class.java).toInstance(World(Vector2(0F, -9.81F), true).apply {
+        bind(World::class.java).toInstance(World(Vector2(0F, -9.81F * 2F), true).apply {
             // Setup contact listener
             this.setContactListener(object : ContactListener {
                 override fun beginContact(contact: Contact) {
-                    val userDataA = contact.fixtureA.userData as? String
+                    val fa = contact.fixtureA
+                    val fb = contact.fixtureB
+
+                    if (fa.body.userData is Entity && fb.body.userData is Entity) {
+                        handleCollision(fa.body.userData as Entity, fb.body.userData as Entity)
+                    }
+
+                    /*val userDataA = contact.fixtureA.userData as? String
                     val userDataB = contact.fixtureB.userData as? String
                     if (userDataA == "outerCircle" && userDataB != "outerCircle") {
                         putOnGround(contact.fixtureA, true)
                     } else if (userDataB == "outerCircle" && userDataA != "outerCircle") {
                         putOnGround(contact.fixtureB, true)
-                    }
+                    }*/
                 }
 
                 override fun endContact(contact: Contact) {
-                    val userDataA = contact.fixtureA.userData as? String
+                    /*val userDataA = contact.fixtureA.userData as? String
                     val userDataB = contact.fixtureB.userData as? String
                     if (userDataA == "outerCircle" && userDataB != "outerCircle") {
                         putOnGround(contact.fixtureA, false)
                     } else if (userDataB == "outerCircle" && userDataA != "outerCircle") {
                         putOnGround(contact.fixtureB, false)
+                    }*/
+                }
+
+                private fun handleCollision(entity1: Entity, entity2: Entity) {
+                    // Assign collision entity if entity has the collision component
+                    if (entity1.getComponent(CollisionComponent::class.java) != null) {
+                        entity1.collision.collisionEntity = entity2
+                    }
+                    if (entity2.getComponent(CollisionComponent::class.java) != null) {
+                        entity2.collision.collisionEntity = entity1
                     }
                 }
 
@@ -76,7 +93,8 @@ class GameModule : AbstractModule() {
                 PhysicsSystem::class.java,
                 PhysicsSynchronizationSystem::class.java,
                 RenderingSystem::class.java,
-                PhysicsDebugSystem::class.java
+                PhysicsDebugSystem::class.java,
+                CollisionSystem::class.java
         ).map { injector.getInstance(it) }
         .forEach { engine.addSystem(it) }
 

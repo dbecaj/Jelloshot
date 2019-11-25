@@ -2,6 +2,7 @@ package me.dbecaj.jelloshot.core
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -12,6 +13,7 @@ class GameAssetManager @Inject constructor() {
         private const val playerFile = "ball_single.png"
         private const val platformFile = "platform_green_resized.png"
         private const val coinFile = "coin.png"
+        private const val atlasFile = "atlas.png"
     }
 
     private val assetManager: AssetManager = AssetManager()
