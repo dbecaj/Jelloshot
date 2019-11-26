@@ -2,7 +2,6 @@ package me.dbecaj.jelloshot.core
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef
@@ -108,9 +107,9 @@ class GameWorld @Inject constructor(
         return entity
     }
 
-    fun createPlatform(position: Vector2): Entity {
+    fun createGreenPlatform(position: Vector2): Entity {
         val entity = Entity().apply {
-            add(TextureRegionComponent(assetManager.platformSprite()))
+            add(TextureRegionComponent(assetManager.greenPlatformSprite()))
             add(TransformComponent(position, 0F, 3F))
 
             val body = world.createBody(BodyDef().apply {
@@ -123,7 +122,30 @@ class GameWorld @Inject constructor(
             body.userData = this
             add(PhysicsComponent(body))
 
-            add(EntityTypeComponent(EntityType.PLATFORM))
+            add(EntityTypeComponent(EntityType.GREEN_PLATFORM))
+            add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
+    fun createRedPlatform(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.redPlatformSprite()))
+            add(TransformComponent(position, 0F, 3F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.StaticBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(4.2F, 0.7F)
+            }, 1.0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.RED_PLATFORM))
             add(CollisionComponent(null))
         }
 
@@ -148,6 +170,25 @@ class GameWorld @Inject constructor(
 
             add(EntityTypeComponent(EntityType.COIN))
             add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
+    fun createGround(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.groundSprite()))
+            add(TransformComponent(Vector2(position), 0F, 2F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.StaticBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(1F, 1F)
+            }, 1.0F)
+            body.setTransform(transform.position, 0F)
+            add(PhysicsComponent(body))
         }
 
         engine.addEntity(entity)

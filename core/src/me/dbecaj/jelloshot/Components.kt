@@ -50,7 +50,8 @@ class PlayerComponent(): Component {
 enum class EntityType {
     PLAYER,
     COIN,
-    PLATFORM,
+    GREEN_PLATFORM,
+    RED_PLATFORM
 }
 
 class EntityTypeComponent(val entityType: EntityType) : Component {

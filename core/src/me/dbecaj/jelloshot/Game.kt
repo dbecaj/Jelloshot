@@ -1,7 +1,6 @@
 package me.dbecaj.jelloshot
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
@@ -9,9 +8,6 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.PolygonShape
-import com.badlogic.gdx.physics.box2d.World
 import com.google.inject.Guice
 import com.google.inject.Inject
 import me.dbecaj.jelloshot.core.DisposalClass
@@ -34,11 +30,6 @@ class Game : ApplicationAdapter() {
         disposal = injector.getInstance(DisposalClass::class.java)
 
         //Gdx.input.inputProcessor = injector.getInstance(MyInputAdapter::class.java)
-
-        gameWorld = injector.getInstance(GameWorld::class.java)
-        gameWorld.createPlayer(Vector2(5F, 10F))
-        gameWorld.createPlatform(Vector2(20F, 7F))
-        gameWorld.createCoin(Vector2(30F, 10F))
 
         val levelBuilder = injector.getInstance(LevelBuilder::class.java)
         levelBuilder.initialize()
