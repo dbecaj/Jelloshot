@@ -10,32 +10,33 @@ import com.google.inject.Singleton
 class GameAssetManager @Inject constructor() {
 
     companion object {
-        private const val playerFile = "ball_single.png"
-        private const val platformFile = "platform_green_resized.png"
-        private const val coinFile = "coin.png"
         private const val atlasFile = "atlas.png"
     }
 
     private val assetManager: AssetManager = AssetManager()
 
     init {
-        assetManager.load(playerFile, Texture::class.java)
-        assetManager.load(platformFile, Texture::class.java)
-        assetManager.load(coinFile, Texture::class.java)
+        assetManager.load(atlasFile, Texture::class.java)
 
         assetManager.finishLoading()
     }
 
-    fun playerSprite(): Texture {
-        return assetManager.get(playerFile, Texture::class.java)
+    fun playerSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(0, 32, 32, 32)
+        }
     }
 
-    fun platformSprite(): Texture {
-        return assetManager.get(platformFile, Texture::class.java)
+    fun platformSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(32, 0, 32 * 3, 32)
+        }
     }
 
-    fun coinSprite(): Texture {
-        return assetManager.get(coinFile, Texture::class.java)
+    fun coinSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(4 * 32, 0, 32, 32)
+        }
     }
 
     fun dispose() {

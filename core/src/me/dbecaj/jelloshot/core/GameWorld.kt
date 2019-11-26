@@ -21,8 +21,8 @@ class GameWorld @Inject constructor(
 
     fun createPlayer(position: Vector2): Entity {
         val entity = Entity().apply {
-            //add(TextureRegionComponent(TextureRegion(assetManager.playerSprite())))
-            add(TransformComponent(position, 0F, 0.25F))
+            add(TextureRegionComponent(assetManager.playerSprite()))
+            add(TransformComponent(position, 0F, 3F))
             add(PlayerComponent())
 
             val NUM_SEGMENTS = 30
@@ -110,14 +110,14 @@ class GameWorld @Inject constructor(
 
     fun createPlatform(position: Vector2): Entity {
         val entity = Entity().apply {
-            add(TextureRegionComponent(TextureRegion(assetManager.platformSprite())))
-            add(TransformComponent(position, 0F, 0.25F))
+            add(TextureRegionComponent(assetManager.platformSprite()))
+            add(TransformComponent(position, 0F, 3F))
 
             val body = world.createBody(BodyDef().apply {
                 type = BodyDef.BodyType.StaticBody
             })
             body.createFixture(PolygonShape().apply {
-                setAsBox(4F, 0.9F)
+                setAsBox(4.2F, 0.7F)
             }, 1.0F)
             body.setTransform(transform.position, 0F)
             body.userData = this
@@ -133,8 +133,8 @@ class GameWorld @Inject constructor(
 
     fun createCoin(position: Vector2): Entity {
         val entity = Entity().apply {
-            add(TextureRegionComponent(TextureRegion(assetManager.coinSprite())))
-            add(TransformComponent(position, 0F, 0.12F))
+            add(TextureRegionComponent(assetManager.coinSprite()))
+            add(TransformComponent(position, 0F, 3F))
 
             val body = world.createBody(BodyDef().apply {
                 type = BodyDef.BodyType.StaticBody
