@@ -31,8 +31,18 @@ class LevelBuilder @Inject constructor(
                     // We multiply the coordinates by 2 to offset the central coordinate system
                     val position = Vector2(x.toFloat() * 2F, y.toFloat() * 2F)
                     when (cell.tile.id) {
-                        1 -> gameWorld.createGround(position)
-                        2 -> gameWorld.createGreenPlatform(position)
+                        1 -> {
+                            gameWorld.createGround(position)
+                            position.y = position.y - 2
+                            for (i in 0 until 5) {
+                                gameWorld.createDirt(position)
+                                position.y = position.y - 2
+                            }
+                        }
+                        2 -> {
+                            gameWorld.createGreenMovingPlatform(position, Vector2(position).add(0F, 10F), 0.5F)
+                            //gameWorld.createGreenPlatform(position)
+                        }
                         5 -> gameWorld.createCoin(Vector2(position))
                         6 -> gameWorld.createPlayer(position)
                         7 -> gameWorld.createRedPlatform(position)

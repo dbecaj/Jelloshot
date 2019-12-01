@@ -29,6 +29,7 @@ class GameWorld @Inject constructor(
             val RADIUS = 80F
 
             val center = Vector2(position)
+            //println("Center: ${center.x}, ${center.y}")
             val fixtureDef = FixtureDef().apply {
                 shape = CircleShape().apply { radius = 0.3F }
                 density = 0.1F
@@ -52,6 +53,7 @@ class GameWorld @Inject constructor(
                 val body = world.createBody(BodyDef().apply {
                     type = BodyDef.BodyType.DynamicBody
                     this.position.set(circlePosition.add(center))
+                    //println("Outer circle ${i}: ${this.position.x}, ${this.position.y}")
                 })
                 body.createFixture(fixtureDef)
 
@@ -155,6 +157,30 @@ class GameWorld @Inject constructor(
         return entity
     }
 
+    fun createGreenMovingPlatform(position: Vector2, endPos: Vector2, speed: Float): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.greenPlatformSprite()))
+            add(TransformComponent(position, 0F, 3F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.KinematicBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(4.2F, 0.7F)
+            }, 1.0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.GREEN_PLATFORM))
+            add(CollisionComponent(null))
+            add(MovingPlatformComponent(Vector2(position), endPos, speed))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
     fun createCoin(position: Vector2): Entity {
         val entity = Entity().apply {
             add(TextureRegionComponent(assetManager.coinSprite()))
@@ -191,6 +217,16 @@ class GameWorld @Inject constructor(
             }, 1.0F)
             body.setTransform(transform.position, 0F)
             add(PhysicsComponent(body))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
+    fun createDirt(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.dirtSprite()))
+            add(TransformComponent(Vector2(position), 0F, 2F))
         }
 
         engine.addEntity(entity)

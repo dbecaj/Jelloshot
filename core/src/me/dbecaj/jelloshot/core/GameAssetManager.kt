@@ -58,6 +58,12 @@ class GameAssetManager @Inject constructor() {
         }
     }
 
+    fun dirtSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(4 * 32, 32, 32, 32)
+        }
+    }
+
     fun level(): TiledMap {
         return assetManager.get(level1, TiledMap::class.java)
     }

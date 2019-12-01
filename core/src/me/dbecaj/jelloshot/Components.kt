@@ -72,6 +72,11 @@ class JellyComponent(val bodies: MutableList<Body>): Component {
     companion object : ComponentResolver<JellyComponent>(JellyComponent::class.java)
 }
 
+class MovingPlatformComponent(val startPos: Vector2, val endPos: Vector2, var speed: Float): Component {
+    var forward = true
+    companion object : ComponentResolver<MovingPlatformComponent>(MovingPlatformComponent::class.java)
+}
+
 open class ComponentResolver<T: Component>(componentClass: Class<T>) {
     val MAPPER = ComponentMapper.getFor(componentClass)
     operator fun get(entity: Entity) = MAPPER.get(entity)

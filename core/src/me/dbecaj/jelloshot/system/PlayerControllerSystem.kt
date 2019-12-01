@@ -31,7 +31,6 @@ class PlayerControllerSystem @Inject constructor(
 
             override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
                 startDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
-                println("startDragPos: $startDragPos")
 
                 return true
             }
@@ -39,7 +38,6 @@ class PlayerControllerSystem @Inject constructor(
             override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
                 endDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
                 move = true
-                println("endDragPos: $endDragPos")
 
                 return true
             }
@@ -56,7 +54,6 @@ class PlayerControllerSystem @Inject constructor(
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
         if (move) { //&& playerComponent.isOnGround) {
             val movementVector = startDragPos.sub(endDragPos).scl(800F)
-            println("movementVector: $movementVector")
             entity.physics.body.applyForceToCenter(movementVector, true)
         }
 
