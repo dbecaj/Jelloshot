@@ -61,5 +61,11 @@ class PlayerControllerSystem @Inject constructor(
         }
 
         move = false
+
+        // Camera follows player
+        val playerPos = entity.physics.body.position
+
+        camera.position.set(Vector3(playerPos.x, playerPos.y, 0F))
+        camera.update()
     }
 }
