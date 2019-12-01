@@ -10,6 +10,12 @@ val Int.pixelsToMeters: Float
 val Float.pixelsToMeters: Float
     get() = this / 32F
 
+val Int.metersToPixels: Float
+    get() = this * 32F
+
+val Float.metersToPixels: Float
+    get() = this * 32F
+
 val Float.toDegrees : Float
     get() = MathUtils.radiansToDegrees * this
 

@@ -19,6 +19,7 @@ class GameWorld @Inject constructor(
 ) {
 
     fun createPlayer(position: Vector2): Entity {
+        val bodies = mutableListOf<Body>()
         val entity = Entity().apply {
             add(TextureRegionComponent(assetManager.playerSprite()))
             add(TransformComponent(position, 0F, 3F))
@@ -37,7 +38,6 @@ class GameWorld @Inject constructor(
 
             // Create outer circles
             val deltaAngle = (2F * Math.PI) / NUM_SEGMENTS
-            val bodies = mutableListOf<Body>()
             for (i in 0 until NUM_SEGMENTS) {
                 // Calculate angle
                 val theta = deltaAngle * i
@@ -67,7 +67,8 @@ class GameWorld @Inject constructor(
             innerCircleBody.createFixture(fixtureDef.apply {
                 shape = CircleShape().apply {
                     radius = 0.8F
-                    density = 0.5F                }
+                    density = 0.5F
+                }
             })
             innerCircleBody.userData = this
 
@@ -101,6 +102,7 @@ class GameWorld @Inject constructor(
 
             add(EntityTypeComponent(EntityType.PLAYER))
             add(CollisionComponent(null))
+            add(JellyComponent(bodies))
         }
 
         engine.addEntity(entity)

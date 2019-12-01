@@ -24,8 +24,8 @@ class LevelBuilder @Inject constructor(
     fun initialize() {
         val levelLayer = assetManager.level().layers[0] as TiledMapTileLayer
 
-        for (y in 0 until levelLayer.height-1) {
-            for (x in 0 until levelLayer.width-1) {
+        for (y in 0 until levelLayer.height) {
+            for (x in 0 until levelLayer.width) {
                 val cell = levelLayer.getCell(x, y)
                 if (cell != null) {
                     // We multiply the coordinates by 2 to offset the central coordinate system
@@ -41,25 +41,5 @@ class LevelBuilder @Inject constructor(
             }
             println()
         }
-
-        //createGround()
-    }
-
-    fun createGround() {
-        val entity = Entity().apply {
-            add(TransformComponent(Vector2(0F, 0F)))
-
-            val body = world.createBody(BodyDef().apply {
-                type = BodyDef.BodyType.StaticBody
-            })
-            body.createFixture(PolygonShape().apply {
-                setAsBox(500F, 2F)
-            }, 1.0F)
-            body.setTransform(transform.position, 0F)
-
-            add(PhysicsComponent(body))
-        }
-
-        engine.addEntity(entity)
     }
 }

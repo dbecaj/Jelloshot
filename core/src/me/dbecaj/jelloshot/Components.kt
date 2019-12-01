@@ -68,6 +68,10 @@ class CollisionComponent(var collisionEntity: Entity?): Component {
 val Entity.collision: CollisionComponent
     get() = CollisionComponent[this]
 
+class JellyComponent(val bodies: MutableList<Body>): Component {
+    companion object : ComponentResolver<JellyComponent>(JellyComponent::class.java)
+}
+
 open class ComponentResolver<T: Component>(componentClass: Class<T>) {
     val MAPPER = ComponentMapper.getFor(componentClass)
     operator fun get(entity: Entity) = MAPPER.get(entity)

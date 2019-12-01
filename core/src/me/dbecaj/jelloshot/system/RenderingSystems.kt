@@ -3,17 +3,22 @@ package me.dbecaj.jelloshot.system
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
+import me.dbecaj.jelloshot.core.metersToPixels
 import me.dbecaj.jelloshot.core.pixelsToMeters
 import me.dbecaj.jelloshot.core.toDegrees
 
+
+@Singleton
 class RenderingSystem @Inject constructor(private val batch: SpriteBatch,
                                           private val camera: OrthographicCamera) :
         IteratingSystem(Family.all(TransformComponent::class.java).
-                one(TextureComponent::class.java, TextureRegionComponent::class.java).get()) {
+                one(TextureComponent::class.java, TextureRegionComponent::class.java, JellyComponent::class.java).get()) {
 
     override fun update(deltaTime: Float) {
         batch.projectionMatrix = camera.combined
@@ -46,5 +51,57 @@ class RenderingSystem @Inject constructor(private val batch: SpriteBatch,
                     scale, scale,
                     entity.transform.angleRadian.toDegrees)
         }
+    }
+}
+
+class JellyRenderingSystem @Inject() constructor() :
+        IteratingSystem(Family.all(TransformComponent::class.java,
+                                    JellyComponent::class.java,
+                                    PlayerComponent::class.java).get()) {
+
+    override fun processEntity(entity: Entity, deltaTime: Float) {
+        val jellyRendererComponent = entity.getComponent(JellyComponent::class.java)
+        val NUM_SEGMENTS = jellyRendererComponent.bodies.size
+
+        val triangleFanPos = mutableListOf<Vector2>()
+        val textCoords = mutableListOf<Vector2>()
+
+        triangleFanPos[0] = Vector2(entity.physics.body.position.x.metersToPixels,
+                                    entity.physics.body.position.y.metersToPixels)
+        for (i in 0 until NUM_SEGMENTS) {
+            val currentBody = jellyRendererComponent.bodies[i]
+            triangleFanPos[i + 1] = Vector2(currentBody.position.x.metersToPixels,
+                                            currentBody.position.y.metersToPixels)
+        }
+
+        // Loop back to close off the triangle fan
+        triangleFanPos[NUM_SEGMENTS + 1] = triangleFanPos[1]
+
+        val deltaAngle = (2F * Math.PI) / NUM_SEGMENTS
+        textCoords[0] = Vector2(0.5f, 0.5f);
+        for (i in 0 until NUM_SEGMENTS) {
+            val theta = Math.PI + (deltaAngle * i)
+
+            textCoords[i + 1] = Vector2((0.5F + Math.cos(theta) * 0.5F).toFloat(),
+                                        (0.5F + Math.sin(theta) * 0.5F).toFloat())
+        }
+        // Close it off.
+        textCoords[NUM_SEGMENTS+1] = textCoords[1];
+
+        val mesh = Mesh(false, triangleFanPos.size, triangleFanPos.size,
+                VertexAttribute(VertexAttributes.Usage.Position, triangleFanPos.size, "a_position"))
+
+        val coordinates = triangleFanPos.map {
+            arrayOf<Float>(it.x, it.y, 0F)
+        }.flatMap {
+            listOf(it[0], it[1], it[2])
+        }
+        mesh.setVertices(coordinates.toFloatArray())
+        val shortArray = (0 until NUM_SEGMENTS).map {
+            it.toShort()
+        }
+        mesh.setIndices(shortArray.toShortArray())
+
+        //mesh.render(GL20.GL_TRIANGLE_FAN)
     }
 }

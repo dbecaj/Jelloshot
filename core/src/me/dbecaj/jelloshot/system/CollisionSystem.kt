@@ -24,6 +24,9 @@ class CollisionSystem @Inject() constructor() : IteratingSystem(Family.all(
                         println("Coin picked up!")
                         engine.removeEntity(cc)
                     }
+                    EntityType.RED_PLATFORM -> {
+                        val jelly = entity.getComponent(JellyComponent::class.java)
+                    }
                 }
             }
 
