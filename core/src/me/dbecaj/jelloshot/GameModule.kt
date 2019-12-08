@@ -13,6 +13,8 @@ import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.google.inject.Provides
 import com.google.inject.Singleton
+import me.dbecaj.jelloshot.core.GuiCam
+import me.dbecaj.jelloshot.core.HudSystem
 import me.dbecaj.jelloshot.core.pixelsToMeters
 import me.dbecaj.jelloshot.system.*
 
@@ -95,7 +97,8 @@ class GameModule : AbstractModule() {
                 PhysicsSynchronizationSystem::class.java,
                 RenderingSystem::class.java,
                 PhysicsDebugSystem::class.java,
-                CollisionSystem::class.java
+                CollisionSystem::class.java,
+                HudSystem::class.java
         ).map { injector.getInstance(it) }
         .forEach { engine.addSystem(it) }
 
@@ -120,5 +123,10 @@ class GameModule : AbstractModule() {
             setToOrtho(false, viewportWidth, viewportHeight)
             update()
         }
+    }
+
+    @GuiCam @Provides @Singleton
+    fun guiCam(): OrthographicCamera = OrthographicCamera().apply {
+        setToOrtho(false)
     }
 }

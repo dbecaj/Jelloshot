@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -16,6 +17,8 @@ class GameAssetManager @Inject constructor() {
     companion object {
         private const val atlasFile = "atlas.png"
         private const val level1 = "levels/sandbox.tmx"
+
+        private const val skinFile = "skins/uiskin.json"
     }
 
     private val assetManager: AssetManager = AssetManager()
@@ -24,6 +27,7 @@ class GameAssetManager @Inject constructor() {
         assetManager.load(atlasFile, Texture::class.java)
         assetManager.setLoader(TiledMap::class.java, TmxMapLoader(InternalFileHandleResolver()))
         assetManager.load(level1, TiledMap::class.java)
+        assetManager.load(skinFile, Skin::class.java)
 
         assetManager.finishLoading()
     }
@@ -66,6 +70,10 @@ class GameAssetManager @Inject constructor() {
 
     fun level(): TiledMap {
         return assetManager.get(level1, TiledMap::class.java)
+    }
+
+    fun uiSkin(): Skin {
+        return assetManager.get(skinFile, Skin::class.java)
     }
 
     fun dispose() {

@@ -7,9 +7,12 @@ import com.badlogic.gdx.math.Vector2
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
+import me.dbecaj.jelloshot.core.GameManager
 
 @Singleton
-class CollisionSystem @Inject() constructor() : IteratingSystem(Family.all(
+class CollisionSystem @Inject() constructor(
+        private val gameManager: GameManager
+) : IteratingSystem(Family.all(
         PlayerComponent::class.java,
         CollisionComponent::class.java).get()) {
 
@@ -21,8 +24,7 @@ class CollisionSystem @Inject() constructor() : IteratingSystem(Family.all(
                 // Process the collision
                 when (cc.entityType.entityType) {
                     EntityType.COIN -> {
-                        // Consume coin TODO: Make a game manager to hande the score
-                        println("Coin picked up!")
+                        gameManager.score += 10
                         engine.removeEntity(cc)
                     }
                     EntityType.RED_PLATFORM -> {
