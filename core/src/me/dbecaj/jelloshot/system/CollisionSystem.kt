@@ -7,14 +7,18 @@ import com.badlogic.gdx.math.Vector2
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
+import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.GameManager
 
 @Singleton
 class CollisionSystem @Inject() constructor(
-        private val gameManager: GameManager
+        private val gameManager: GameManager,
+        private val assetManager: GameAssetManager
 ) : IteratingSystem(Family.all(
         PlayerComponent::class.java,
         CollisionComponent::class.java).get()) {
+
+    private var hasSoundPlayed = false
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val cc = entity.collision.collisionEntity
@@ -26,8 +30,13 @@ class CollisionSystem @Inject() constructor(
                     EntityType.COIN -> {
                         gameManager.score += 10
                         engine.removeEntity(cc)
+                        assetManager.coinPickupSound().play(1.0f)
                     }
                     EntityType.RED_PLATFORM -> {
+                        if (!hasSoundPlayed) {
+                            assetManager.deathSound().play(1.0F)
+                            hasSoundPlayed = true
+                        }
                         /*println("Touching red platfrom")
                         val centerPos = entity.physics.body.position
                         val jelly = entity.getComponent(JellyComponent::class.java)

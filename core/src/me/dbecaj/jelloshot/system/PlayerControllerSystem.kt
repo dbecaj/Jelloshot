@@ -12,13 +12,15 @@ import com.badlogic.gdx.physics.box2d.World
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.PlayerComponent
+import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.toVector2
 import me.dbecaj.jelloshot.physics
 
 @Singleton
 class PlayerControllerSystem @Inject constructor(
         private val world: World,
-        private val camera: OrthographicCamera
+        private val camera: OrthographicCamera,
+        private val assetManager: GameAssetManager
 ) : IteratingSystem(Family.all(PlayerComponent::class.java).get()) {
 
     private var startDragPos: Vector2 = Vector2()
@@ -53,6 +55,7 @@ class PlayerControllerSystem @Inject constructor(
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
         if (move) { //&& playerComponent.isOnGround) {
+            assetManager.jumpSound().play(1.0f)
             val movementVector = startDragPos.sub(endDragPos).scl(800F)
             entity.physics.body.applyForceToCenter(movementVector, true)
         }
