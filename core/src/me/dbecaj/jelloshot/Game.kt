@@ -4,16 +4,15 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.google.inject.Guice
 import com.google.inject.Inject
-import me.dbecaj.jelloshot.core.DisposalClass
-import me.dbecaj.jelloshot.core.GameWorld
-import me.dbecaj.jelloshot.core.LevelBuilder
-import me.dbecaj.jelloshot.core.toVector2
+import me.dbecaj.jelloshot.core.*
+import me.dbecaj.jelloshot.system.PlayerControllerSystem
 
 class Game : ApplicationAdapter() {
     private lateinit var engine: Engine
@@ -29,10 +28,12 @@ class Game : ApplicationAdapter() {
         engine = injector.getInstance(Engine::class.java)
         disposal = injector.getInstance(DisposalClass::class.java)
 
-        //Gdx.input.inputProcessor = injector.getInstance(MyInputAdapter::class.java)
-
         val levelBuilder = injector.getInstance(LevelBuilder::class.java)
         levelBuilder.initialize()
+
+        // Setup input processor (we order them based on priority)
+        Gdx.input.inputProcessor = InputMultiplexer(injector.getInstance(Hud::class.java).stage,
+                injector.getInstance(PlayerControllerSystem::class.java).playerInputAdapter)
     }
 
     override fun render() {

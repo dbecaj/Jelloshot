@@ -17,7 +17,7 @@ class Hud @Inject() constructor(
 ) {
 
     private val viewport = FitViewport(guiCam.viewportWidth, guiCam.viewportHeight, guiCam)
-    private val stage = Stage(viewport, spriteBatch)
+    public val stage = Stage(viewport, spriteBatch)
     private val table: Table
     private val scoreLabel: Label
 

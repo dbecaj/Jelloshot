@@ -27,31 +27,6 @@ class PlayerControllerSystem @Inject constructor(
     private var endDragPos: Vector2 = Vector2()
     private var move: Boolean = false
 
-    // Setup InputAdapter
-    init {
-        Gdx.input.inputProcessor = object : InputAdapter() {
-
-            override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-                startDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
-
-                return true
-            }
-
-            override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-                endDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
-                move = true
-
-                return true
-            }
-
-            override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-                val worldPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F))
-
-                return true
-            }
-        }
-    }
-
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
         if (move) { //&& playerComponent.isOnGround) {
@@ -67,5 +42,26 @@ class PlayerControllerSystem @Inject constructor(
 
         camera.position.set(Vector3(playerPos.x, playerPos.y, 0F))
         camera.update()
+    }
+
+    public val playerInputAdapter = object : InputAdapter() {
+        override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+            startDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
+
+            return true
+        }
+
+        override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+            endDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
+            move = true
+
+            return true
+        }
+
+        override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+            val worldPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F))
+
+            return true
+        }
     }
 }
