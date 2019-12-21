@@ -30,10 +30,6 @@ class Game : ApplicationAdapter() {
 
         val levelBuilder = injector.getInstance(LevelBuilder::class.java)
         levelBuilder.initialize()
-
-        // Setup input processor (we order them based on priority)
-        Gdx.input.inputProcessor = InputMultiplexer(injector.getInstance(Hud::class.java).stage,
-                injector.getInstance(PlayerControllerSystem::class.java).playerInputAdapter)
     }
 
     override fun render() {

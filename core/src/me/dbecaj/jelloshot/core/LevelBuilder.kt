@@ -52,4 +52,9 @@ class LevelBuilder @Inject constructor(
             println()
         }
     }
+
+    fun reinitialize() {
+        engine.removeAllEntities()
+        initialize()
+    }
 }
