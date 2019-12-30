@@ -5,6 +5,8 @@ import com.badlogic.gdx.InputMultiplexer
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
+import me.dbecaj.jelloshot.core.screen.ScreenEnum
+import me.dbecaj.jelloshot.core.screen.ScreenManager
 import me.dbecaj.jelloshot.system.PlayerControllerSystem
 
 enum class GameState {
@@ -22,10 +24,11 @@ class GameManager @Inject() constructor(
     var score = 0
     var state = GameState.RUNNING
 
-    val inputMultiplexer: InputMultiplexer
+    var inputMultiplexer: InputMultiplexer = InputMultiplexer()
 
-    init {
-        inputMultiplexer = InputMultiplexer(playerControllerSystem.playerInputAdapter)
+    fun init() {
+        inputMultiplexer = InputMultiplexer(injector.getInstance(Hud::class.java).stage,
+                                            playerControllerSystem.playerInputAdapter)
         Gdx.input.inputProcessor = inputMultiplexer
     }
 
@@ -61,7 +64,11 @@ class GameManager @Inject() constructor(
         state = GameState.LOSE
     }
 
-    fun exit() {
-        Gdx.app.exit()
+    fun quit() {
+        score = 0
+        state = GameState.RESTART
+        injector.getInstance(Hud::class.java).hidePauseMenu()
+
+        injector.getInstance(ScreenManager::class.java).showScreen(ScreenEnum.MAIN_MENU)
     }
 }

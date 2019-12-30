@@ -33,9 +33,6 @@ class Hud @Inject() constructor(
     private val scoreLabel: Label
 
     init {
-        // Add stage input processor
-        gameManager.inputMultiplexer.addProcessor(0, stage)
-
         // Create pause menu
         pauseMenu = Table(assetManager.uiSkin()).apply {
             setDebug(false)
@@ -58,10 +55,10 @@ class Hud @Inject() constructor(
                 })
             }).expandX().top().center().width(350F).height(50F).pad(16F)
             row()
-            add(TextButton("Exit", assetManager.uiSkin()).apply {
+            add(TextButton("Quit", assetManager.uiSkin()).apply {
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        gameManager.exit()
+                        gameManager.quit()
                     }
                 })
             }).expand().bottom().width(350F).height(50F).pad(16F)
@@ -77,7 +74,7 @@ class Hud @Inject() constructor(
             add(TextButton("Pause", assetManager.uiSkin()).apply {
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        if (gameManager.state == GameState.RUNNING) {
+                        if (gameManager.state == GameState.RUNNING || gameManager.state == GameState.RESTART) {
                             gameManager.pause()
                         }
                         else if (gameManager.state == GameState.PAUSED) {
