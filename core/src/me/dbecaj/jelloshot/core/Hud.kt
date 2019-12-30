@@ -1,8 +1,6 @@
 package me.dbecaj.jelloshot.core
 
 import com.badlogic.ashley.core.EntitySystem
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Pixmap
@@ -18,28 +16,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.google.inject.Inject
-import me.dbecaj.jelloshot.system.PlayerControllerSystem
+import com.google.inject.Singleton
 
-
+@Singleton
 class Hud @Inject() constructor(
         private val spriteBatch: SpriteBatch,
         private @GuiCam val guiCam: OrthographicCamera,
         private val assetManager: GameAssetManager,
-        private val gameManager: GameManager,
-        private val playerControllerSystem: PlayerControllerSystem
+        private val gameManager: GameManager
 ) {
 
     private val viewport = FitViewport(guiCam.viewportWidth, guiCam.viewportHeight, guiCam)
     val stage = Stage(viewport, spriteBatch)
     private val table: Table
-    private lateinit var pauseMenu: Table
+    private val pauseMenu: Table
     private val scoreLabel: Label
-    private val inputMultiplexer: InputMultiplexer
 
     init {
-        inputMultiplexer = InputMultiplexer(stage, playerControllerSystem.playerInputAdapter)
-        Gdx.input.inputProcessor = inputMultiplexer
+        // Add stage input processor
+        gameManager.inputMultiplexer.addProcessor(0, stage)
 
+        // Create pause menu
         pauseMenu = Table(assetManager.uiSkin()).apply {
             setDebug(false)
             width = 400F
@@ -56,7 +53,7 @@ class Hud @Inject() constructor(
             add(TextButton("Restart", assetManager.uiSkin()).apply {
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        println("Restart clicked!")
+                        gameManager.restart()
                     }
                 })
             }).expandX().top().center().width(350F).height(50F).pad(16F)
@@ -64,7 +61,7 @@ class Hud @Inject() constructor(
             add(TextButton("Exit", assetManager.uiSkin()).apply {
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        println("Exit clicked!")
+                        gameManager.exit()
                     }
                 })
             }).expand().bottom().width(350F).height(50F).pad(16F)
@@ -81,14 +78,10 @@ class Hud @Inject() constructor(
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
                         if (gameManager.state == GameState.RUNNING) {
-                            stage.addActor(pauseMenu)
-                            inputMultiplexer.removeProcessor(1) // When paused remove player input processor
-                            gameManager.state = GameState.PAUSED
+                            gameManager.pause()
                         }
                         else if (gameManager.state == GameState.PAUSED) {
-                            pauseMenu.remove()
-                            inputMultiplexer.addProcessor(playerControllerSystem.playerInputAdapter)
-                            gameManager.state = GameState.RUNNING
+                            gameManager.unpause()
                         }
                     }
                 })
@@ -106,6 +99,14 @@ class Hud @Inject() constructor(
 
     fun draw() {
         stage.draw();
+    }
+
+    fun showPauseMenu() {
+        stage.addActor(pauseMenu)
+    }
+
+    fun hidePauseMenu() {
+        pauseMenu.remove()
     }
 }
 

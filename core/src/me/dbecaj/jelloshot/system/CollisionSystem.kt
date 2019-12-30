@@ -9,6 +9,7 @@ import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
 import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.GameManager
+import me.dbecaj.jelloshot.core.GameState
 
 @Singleton
 class CollisionSystem @Inject() constructor(
@@ -17,8 +18,6 @@ class CollisionSystem @Inject() constructor(
 ) : IteratingSystem(Family.all(
         PlayerComponent::class.java,
         CollisionComponent::class.java).get()) {
-
-    private var hasSoundPlayed = false
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val cc = entity.collision.collisionEntity
@@ -33,9 +32,9 @@ class CollisionSystem @Inject() constructor(
                         assetManager.coinPickupSound().play(1.0f)
                     }
                     EntityType.RED_PLATFORM -> {
-                        if (!hasSoundPlayed) {
+                        if (gameManager.state != GameState.LOSE) {
                             assetManager.deathSound().play(1.0F)
-                            hasSoundPlayed = true
+                            gameManager.lose()
                         }
                         /*println("Touching red platfrom")
                         val centerPos = entity.physics.body.position

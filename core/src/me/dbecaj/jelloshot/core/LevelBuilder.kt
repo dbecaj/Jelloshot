@@ -15,7 +15,6 @@ import me.dbecaj.jelloshot.transform
 
 @Singleton
 class LevelBuilder @Inject constructor(
-        private val world: World,
         private val engine: Engine,
         private val gameWorld: GameWorld,
         private val assetManager: GameAssetManager
@@ -54,7 +53,11 @@ class LevelBuilder @Inject constructor(
     }
 
     fun reinitialize() {
-        engine.removeAllEntities()
+        clear()
         initialize()
+    }
+
+    fun clear() {
+        engine.removeAllEntities()
     }
 }

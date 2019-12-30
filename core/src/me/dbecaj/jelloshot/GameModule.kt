@@ -108,6 +108,13 @@ class GameModule : AbstractModule() {
 
             override fun entityRemoved(entity: Entity) {
                 world.destroyBody(entity.physics.body)
+
+                // If entity is player also remove the jelly bodies
+                entity.tryGet(JellyComponent)?.let { jelly ->
+                    jelly.bodies.forEach {
+                        world.destroyBody(it)
+                    }
+                }
             }
         })
 
