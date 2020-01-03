@@ -19,6 +19,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.DisposalClass
 import me.dbecaj.jelloshot.core.GameAssetManager
+import me.dbecaj.jelloshot.core.GamePreferences
 import me.dbecaj.jelloshot.core.GuiCam
 
 @Singleton
@@ -26,7 +27,8 @@ class MainMenuScreen @Inject() constructor(
         private val screenManager: ScreenManager,
         private val assetManager: GameAssetManager,
         private @GuiCam val guiCam: OrthographicCamera,
-        private val spriteBatch: SpriteBatch
+        private val spriteBatch: SpriteBatch,
+        private val gamePreferences: GamePreferences
 ) : Screen {
 
     private val viewport = FitViewport(guiCam.viewportWidth, guiCam.viewportHeight, guiCam)

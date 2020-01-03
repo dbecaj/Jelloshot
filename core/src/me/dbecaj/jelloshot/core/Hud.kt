@@ -23,7 +23,8 @@ class Hud @Inject() constructor(
         private val spriteBatch: SpriteBatch,
         private @GuiCam val guiCam: OrthographicCamera,
         private val assetManager: GameAssetManager,
-        private val gameManager: GameManager
+        private val gameManager: GameManager,
+        private val gamePreferences: GamePreferences
 ) {
 
     private val viewport = FitViewport(guiCam.viewportWidth, guiCam.viewportHeight, guiCam)
@@ -31,6 +32,7 @@ class Hud @Inject() constructor(
     private val table: Table
     private val pauseMenu: Table
     private val scoreLabel: Label
+    private val highscoreLabel: Label
 
     init {
         // Create pause menu
@@ -83,6 +85,9 @@ class Hud @Inject() constructor(
                     }
                 })
             }).pad(16F)
+            row()
+            highscoreLabel = Label("Highscore: 0", assetManager.uiSkin())
+            add(highscoreLabel).left().top().padLeft(16F).expandX()
         }
 
         stage.addActor(table)
@@ -90,6 +95,7 @@ class Hud @Inject() constructor(
 
     fun update(deltaTime: Float) {
         scoreLabel.setText("Score: ${gameManager.score}")
+        highscoreLabel.setText("Highscore: ${gamePreferences.highscore}")
 
         stage.act(deltaTime)
     }

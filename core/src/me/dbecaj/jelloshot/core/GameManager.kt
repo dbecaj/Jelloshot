@@ -19,6 +19,7 @@ enum class GameState {
 @Singleton
 class GameManager @Inject() constructor(
         private val playerControllerSystem: PlayerControllerSystem,
+        private val gamePreferences: GamePreferences,
         private val injector: Injector
 ) {
     var score = 0
@@ -51,6 +52,9 @@ class GameManager @Inject() constructor(
     }
 
     fun restart() {
+        if (score > gamePreferences.highscore) {
+            gamePreferences.highscore = score
+        }
         score = 0
         injector.getInstance(LevelBuilder::class.java).reinitialize()
 
@@ -65,6 +69,9 @@ class GameManager @Inject() constructor(
     }
 
     fun quit() {
+        if (score > gamePreferences.highscore) {
+            gamePreferences.highscore = score
+        }
         score = 0
         state = GameState.RESTART
         injector.getInstance(Hud::class.java).hidePauseMenu()
