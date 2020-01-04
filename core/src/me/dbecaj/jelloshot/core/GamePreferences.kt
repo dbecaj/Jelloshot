@@ -18,6 +18,13 @@ class GamePreferences @Inject() constructor() {
             field = value
         }
 
+    var soundVolume = -1f
+        get() = pref.getFloat("soundVolume", 0.5f);
+        set(value) {
+            pref.putFloat("soundVolume", value)
+            field = value
+        }
+
     companion object {
         fun save() {
             Gdx.app.getPreferences("JelloShotPrefs").flush()

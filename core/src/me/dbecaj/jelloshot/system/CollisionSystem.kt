@@ -9,12 +9,14 @@ import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
 import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.GameManager
+import me.dbecaj.jelloshot.core.GamePreferences
 import me.dbecaj.jelloshot.core.GameState
 
 @Singleton
 class CollisionSystem @Inject() constructor(
         private val gameManager: GameManager,
-        private val assetManager: GameAssetManager
+        private val assetManager: GameAssetManager,
+        private val gamePreferences: GamePreferences
 ) : IteratingSystem(Family.all(
         PlayerComponent::class.java,
         CollisionComponent::class.java).get()) {
@@ -29,11 +31,11 @@ class CollisionSystem @Inject() constructor(
                     EntityType.COIN -> {
                         gameManager.score += 10
                         engine.removeEntity(cc)
-                        assetManager.coinPickupSound().play(1.0f)
+                        assetManager.coinPickupSound().play(gamePreferences.soundVolume)
                     }
                     EntityType.RED_PLATFORM -> {
                         if (gameManager.state != GameState.LOSE) {
-                            assetManager.deathSound().play(1.0F)
+                            assetManager.deathSound().play(gamePreferences.soundVolume)
                             gameManager.lose()
                         }
                         /*println("Touching red platfrom")

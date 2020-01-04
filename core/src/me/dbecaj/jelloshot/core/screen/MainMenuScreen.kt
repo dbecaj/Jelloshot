@@ -45,7 +45,7 @@ class MainMenuScreen @Inject() constructor(
 
             // Background
             val bgPixmap = Pixmap(1, 1, Pixmap.Format.RGB565)
-            bgPixmap.setColor(Color.LIGHT_GRAY)
+            bgPixmap.setColor(Color.OLIVE)
             bgPixmap.fill()
             val textureRegionDrawableBg = TextureRegionDrawable(TextureRegion(Texture(bgPixmap)))
             background = textureRegionDrawableBg

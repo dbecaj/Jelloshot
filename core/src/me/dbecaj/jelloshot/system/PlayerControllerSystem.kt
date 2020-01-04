@@ -13,6 +13,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.PlayerComponent
 import me.dbecaj.jelloshot.core.GameAssetManager
+import me.dbecaj.jelloshot.core.GamePreferences
 import me.dbecaj.jelloshot.core.toVector2
 import me.dbecaj.jelloshot.physics
 
@@ -20,7 +21,8 @@ import me.dbecaj.jelloshot.physics
 class PlayerControllerSystem @Inject constructor(
         private val world: World,
         private val camera: OrthographicCamera,
-        private val assetManager: GameAssetManager
+        private val assetManager: GameAssetManager,
+        private val gamePreferences: GamePreferences
 ) : IteratingSystem(Family.all(PlayerComponent::class.java).get()) {
 
     private var startDragPos: Vector2 = Vector2()
@@ -30,7 +32,7 @@ class PlayerControllerSystem @Inject constructor(
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
         if (move) { //&& playerComponent.isOnGround) {
-            assetManager.jumpSound().play(1.0f)
+            assetManager.jumpSound().play(gamePreferences.soundVolume)
             val movementVector = startDragPos.sub(endDragPos).scl(800F)
             entity.physics.body.applyForceToCenter(movementVector, true)
         }
