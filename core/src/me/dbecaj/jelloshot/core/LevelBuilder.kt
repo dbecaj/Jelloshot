@@ -48,7 +48,6 @@ class LevelBuilder @Inject constructor(
                     }
                 }
             }
-            println()
         }
     }
 

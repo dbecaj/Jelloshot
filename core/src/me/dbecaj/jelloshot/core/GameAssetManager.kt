@@ -13,14 +13,20 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import java.io.File
+import java.io.FileFilter
 
 
 @Singleton
 class GameAssetManager @Inject constructor() {
 
     companion object {
+        val levelList = Gdx.files.internal("core/assets/levels").list(FileFilter { file -> file.extension == "tmx" })
+                .map { it.file() }
+        private lateinit var loadedLevel: TiledMap
+        private var loadedLevelPath = "" // This is used to check if we already have the level loaded in loadLevel()
+
         private const val atlasFile = "atlas.png"
-        private const val level1 = "levels/sandbox.tmx"
 
         private const val skinFile = "skins/uiskin.json"
         private const val coinPickupFile = "sounds/coin_pickup.mp3"
@@ -32,8 +38,6 @@ class GameAssetManager @Inject constructor() {
 
     init {
         assetManager.load(atlasFile, Texture::class.java)
-        assetManager.setLoader(TiledMap::class.java, TmxMapLoader(InternalFileHandleResolver()))
-        assetManager.load(level1, TiledMap::class.java)
         assetManager.load(skinFile, Skin::class.java)
         assetManager.load(coinPickupFile, Sound::class.java)
         assetManager.load(jumpFile, Sound::class.java)
@@ -78,8 +82,16 @@ class GameAssetManager @Inject constructor() {
         }
     }
 
+    fun loadLevel(file: File) {
+        // Check if the level is already loaded
+        if (loadedLevelPath == file.path) return
+
+        loadedLevel = TmxMapLoader().load(file.path)
+        loadedLevelPath = file.path
+    }
+
     fun level(): TiledMap {
-        return assetManager.get(level1, TiledMap::class.java)
+        return loadedLevel
     }
 
     fun uiSkin(): Skin {

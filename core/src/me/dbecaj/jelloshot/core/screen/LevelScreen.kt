@@ -20,13 +20,15 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.GuiCam
+import java.io.FileFilter
 
 @Singleton
 class LevelScreen @Inject() constructor(
         private val screenManager: ScreenManager,
         private val assetManager: GameAssetManager,
         private @GuiCam val guiCam: OrthographicCamera,
-        private val spriteBatch: SpriteBatch
+        private val spriteBatch: SpriteBatch,
+        private val gameAssetManager: GameAssetManager
 ) : Screen {
 
     private val viewport = FitViewport(guiCam.viewportWidth, guiCam.viewportHeight, guiCam)
@@ -50,13 +52,16 @@ class LevelScreen @Inject() constructor(
 
             // Level selector buttons
             val buttonStyle = assetManager.uiSkin().get(TextButton.TextButtonStyle::class.java)
-            add(TextButton("Level1", buttonStyle).apply {
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        screenManager.showScreen(ScreenEnum.GAME)
-                    }
-                })
-            }).center().width(100F).height(100F).pad(32F)
+            GameAssetManager.levelList.forEach{ file ->
+                add(TextButton(file.nameWithoutExtension, buttonStyle).apply {
+                    addListener(object : ChangeListener() {
+                        override fun changed(event: ChangeEvent?, actor: Actor?) {
+                            gameAssetManager.loadLevel(file)
+                            screenManager.showScreen(ScreenEnum.GAME)
+                        }
+                    })
+                }).center().width(100F).height(100F).pad(32F)
+            }
 
             // Buttons
             row()
