@@ -77,7 +77,21 @@ class GameModule : AbstractModule() {
                     }
                 }
 
-                override fun preSolve(contact: Contact?, oldManifold: Manifold?) {}
+                override fun preSolve(contact: Contact, oldManifold: Manifold?) {
+                    val fa = contact.fixtureA
+                    val fb = contact.fixtureB
+
+                    // Disable collision resolution with coin
+                    if (fa.body.userData is Entity && fb.body.userData is Entity) {
+                        val entity1 = fa.body.userData as Entity
+                        val entity2 = fb.body.userData as Entity
+
+                        if (entity1.getComponent(EntityTypeComponent::class.java)?.entityType == EntityType.COIN ||
+                                entity2.getComponent(EntityTypeComponent::class.java)?.entityType == EntityType.COIN) {
+                            contact.isEnabled = false
+                        }
+                    }
+                }
 
                 override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {}
             })
@@ -95,6 +109,7 @@ class GameModule : AbstractModule() {
                 TranslationSystem::class.java,
                 PhysicsSystem::class.java,
                 PhysicsSynchronizationSystem::class.java,
+                //JellyRenderingSystem::class.java,
                 RenderingSystem::class.java,
                 PhysicsDebugSystem::class.java,
                 CollisionSystem::class.java,

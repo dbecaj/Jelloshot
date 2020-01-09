@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -54,17 +55,34 @@ class RenderingSystem @Inject constructor(private val batch: SpriteBatch,
     }
 }
 
-class JellyRenderingSystem @Inject() constructor() :
+class JellyRenderingSystem @Inject() constructor(
+        private val cam: OrthographicCamera
+) :
         IteratingSystem(Family.all(TransformComponent::class.java,
                                     JellyComponent::class.java,
                                     PlayerComponent::class.java).get()) {
+
+    var vertexShader = "attribute vec4 a_position;\n" +
+            "\n" +
+            "uniform mat4 u_projectionViewMatrix;\n" +
+            "\n" +
+            "void main()\n" +
+            "{\n" +
+            "    gl_Position =  u_projectionViewMatrix * a_position;\n" +
+            "} "
+    var fragmentShader = "void main()\n" +
+            "{\n" +
+            "    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n" +
+            "}"
+
+    var shaderProgram = ShaderProgram(vertexShader, fragmentShader)
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val jellyRendererComponent = entity.getComponent(JellyComponent::class.java)
         val NUM_SEGMENTS = jellyRendererComponent.bodies.size
 
-        val triangleFanPos = mutableListOf<Vector2>()
-        val textCoords = mutableListOf<Vector2>()
+        val triangleFanPos = arrayOfNulls<Vector2>(NUM_SEGMENTS + 2)
+        val textCoords = arrayOfNulls<Vector2>(NUM_SEGMENTS + 2)
 
         triangleFanPos[0] = Vector2(entity.physics.body.position.x.metersToPixels,
                                     entity.physics.body.position.y.metersToPixels)
@@ -92,7 +110,7 @@ class JellyRenderingSystem @Inject() constructor() :
                 VertexAttribute(VertexAttributes.Usage.Position, triangleFanPos.size, "a_position"))
 
         val coordinates = triangleFanPos.map {
-            arrayOf<Float>(it.x, it.y, 0F)
+            arrayOf<Float>(it!!.x, it.y, 0F)
         }.flatMap {
             listOf(it[0], it[1], it[2])
         }
@@ -102,6 +120,14 @@ class JellyRenderingSystem @Inject() constructor() :
         }
         mesh.setIndices(shortArray.toShortArray())
 
-        //mesh.render(GL20.GL_TRIANGLE_FAN)
+        if (shaderProgram.isCompiled) {
+            shaderProgram.begin()
+            shaderProgram.setUniformMatrix("u_projectionViewMatrix", cam.combined)
+            mesh.render(shaderProgram, GL20.GL_TRIANGLE_FAN)
+            shaderProgram.end()
+        }
+        else {
+            println("Something is busted yo!")
+        }
     }
 }
