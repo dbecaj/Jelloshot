@@ -1,9 +1,6 @@
 package me.dbecaj.jelloshot
 
-import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.core.EntityListener
-import com.badlogic.ashley.core.Family
+import com.badlogic.ashley.core.*
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -35,26 +32,37 @@ class GameModule : AbstractModule() {
                     val fb = contact.fixtureB
 
                     if (fa.body.userData is Entity && fb.body.userData is Entity) {
-                        handleCollision(fa.body.userData as Entity, fb.body.userData as Entity)
-                    }
+                        val entity1 = fa.body.userData as Entity
+                        val entity2 = fb.body.userData as Entity
 
-                    /*val userDataA = contact.fixtureA.userData as? String
-                    val userDataB = contact.fixtureB.userData as? String
-                    if (userDataA == "outerCircle" && userDataB != "outerCircle") {
-                        putOnGround(contact.fixtureA, true)
-                    } else if (userDataB == "outerCircle" && userDataA != "outerCircle") {
-                        putOnGround(contact.fixtureB, true)
-                    }*/
+                        handleCollision(entity1, entity2)
+
+                        if (entity1.hasComponent(PlayerComponent::class.java) &&
+                                !entity2.hasComponent(PlayerComponent::class.java)) {
+                            putOnGround(entity2, true)
+                        } else if (entity2.hasComponent(PlayerComponent::class.java) &&
+                                !entity1.hasComponent(PlayerComponent::class.java)) {
+                            putOnGround(entity2, true)
+                        }
+                    }
                 }
 
                 override fun endContact(contact: Contact) {
-                    /*val userDataA = contact.fixtureA.userData as? String
-                    val userDataB = contact.fixtureB.userData as? String
-                    if (userDataA == "outerCircle" && userDataB != "outerCircle") {
-                        putOnGround(contact.fixtureA, false)
-                    } else if (userDataB == "outerCircle" && userDataA != "outerCircle") {
-                        putOnGround(contact.fixtureB, false)
-                    }*/
+                    val fa = contact.fixtureA
+                    val fb = contact.fixtureB
+
+                    if (fa.body.userData is Entity && fb.body.userData is Entity) {
+                        val entity1 = fa.body.userData as Entity
+                        val entity2 = fb.body.userData as Entity
+
+                        if (entity1.hasComponent(PlayerComponent::class.java) &&
+                                !entity2.hasComponent(PlayerComponent::class.java)) {
+                            putOnGround(entity2, false)
+                        } else if (entity2.hasComponent(PlayerComponent::class.java) &&
+                                !entity1.hasComponent(PlayerComponent::class.java)) {
+                            putOnGround(entity2, false)
+                        }
+                    }
                 }
 
                 private fun handleCollision(entity1: Entity, entity2: Entity) {
@@ -67,14 +75,15 @@ class GameModule : AbstractModule() {
                     }
                 }
 
-                private fun putOnGround(fixture: Fixture, isOnGround: Boolean) {
-                    val entity = fixture.body.userData as Entity
+                private fun putOnGround(entity: Entity, isOnGround: Boolean) {
                     if (isOnGround) {
                         entity.getComponent(PlayerComponent::class.java).groundCollision++
                     }
                     else {
                         entity.getComponent(PlayerComponent::class.java).groundCollision--
                     }
+
+                    //println("groundCollision: ${entity.getComponent(PlayerComponent::class.java).groundCollision}")
                 }
 
                 override fun preSolve(contact: Contact, oldManifold: Manifold?) {

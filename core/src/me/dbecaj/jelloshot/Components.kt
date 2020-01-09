@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 
+fun <T : Component?> Entity.hasComponent(componentClass: Class<T>?): Boolean {
+    return this.getComponent(componentClass) != null
+}
+
 class TextureComponent(val texture: Texture) : Component {
     companion object : ComponentResolver<TextureComponent>(TextureComponent::class.java)
 }
@@ -51,7 +55,8 @@ enum class EntityType {
     PLAYER,
     COIN,
     GREEN_PLATFORM,
-    RED_PLATFORM
+    RED_PLATFORM,
+    GROUND
 }
 
 class EntityTypeComponent(val entityType: EntityType) : Component {

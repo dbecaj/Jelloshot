@@ -215,8 +215,12 @@ class GameWorld @Inject constructor(
             body.createFixture(PolygonShape().apply {
                 setAsBox(1F, 1F)
             }, 1.0F)
+
+            body.userData = this
+
             body.setTransform(transform.position, 0F)
             add(PhysicsComponent(body))
+            add(EntityTypeComponent(EntityType.GROUND))
         }
 
         engine.addEntity(entity)

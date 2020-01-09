@@ -34,6 +34,12 @@ class PlayerControllerSystem @Inject constructor(
         if (move) { //&& playerComponent.isOnGround) {
             assetManager.jumpSound().play(gamePreferences.soundVolume)
             val movementVector = startDragPos.sub(endDragPos).scl(800F)
+
+            // Limit the vector length
+            if (movementVector.len() > 15000) {
+                movementVector.scl(15000 / movementVector.len())
+            }
+
             entity.physics.body.applyForceToCenter(movementVector, true)
         }
 
