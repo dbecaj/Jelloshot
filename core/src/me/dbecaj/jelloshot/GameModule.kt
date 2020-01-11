@@ -95,9 +95,15 @@ class GameModule : AbstractModule() {
                         val entity1 = fa.body.userData as Entity
                         val entity2 = fb.body.userData as Entity
 
-                        if (entity1.getComponent(EntityTypeComponent::class.java)?.entityType == EntityType.COIN ||
-                                entity2.getComponent(EntityTypeComponent::class.java)?.entityType == EntityType.COIN) {
-                            contact.isEnabled = false
+                        if (entity1.getComponent(EntityTypeComponent::class.java) != null &&
+                                entity2.getComponent(EntityTypeComponent::class.java) != null) {
+                            val entity1Type = entity1.getComponent(EntityTypeComponent::class.java).entityType
+                            val entity2Type = entity2.getComponent(EntityTypeComponent::class.java).entityType
+
+                            val nonCollidingEntities = arrayOf(EntityType.COIN, EntityType.CUP)
+                            if (nonCollidingEntities.contains(entity1Type) || nonCollidingEntities.contains(entity2Type)) {
+                                contact.isEnabled = false
+                            }
                         }
                     }
                 }

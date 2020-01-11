@@ -47,6 +47,7 @@ class LevelBuilder @Inject constructor(
                         5 -> gameWorld.createCoin(Vector2(position))
                         6 -> gameWorld.createPlayer(position)
                         7 -> gameWorld.createRedPlatform(position)
+                        13 -> gameWorld.createCup(position)
                     }
                 }
             }

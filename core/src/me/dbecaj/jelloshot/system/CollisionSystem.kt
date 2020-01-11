@@ -51,6 +51,10 @@ class CollisionSystem @Inject() constructor(
                             body.fixtureList[0].shape.radius = body.fixtureList[0].shape.radius * 0.99F;
                         }*/
                     }
+                    EntityType.CUP -> {
+                        engine.removeEntity(cc)
+                        gameManager.win()
+                    }
                 }
             }
 

@@ -261,6 +261,29 @@ class GameWorld @Inject constructor(
         return entity
     }
 
+    fun createCup(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.cupSprite()))
+            add(TransformComponent(position, 0F, 3F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.StaticBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(1F, 1F)
+            }, 0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.CUP))
+            add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
     fun createBox(position: Vector2, size: Float = 1F): Entity {
         val entity = Entity().apply {
             add(TransformComponent(Vector2(position)))

@@ -82,6 +82,12 @@ class GameAssetManager @Inject constructor() {
         }
     }
 
+    fun cupSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(2 * 32, 2* 32, 32, 32)
+        }
+    }
+
     fun loadLevel(file: File) {
         // Check if the level is already loaded
         if (loadedLevelPath == file.path) return

@@ -13,6 +13,7 @@ enum class GameState {
     RUNNING,
     PAUSED,
     LOSE,
+    WIN,
     RESTART
 }
 
@@ -43,7 +44,7 @@ class GameManager @Inject() constructor(
     }
 
     fun unpause() {
-        if (state == GameState.RUNNING || state == GameState.LOSE) return
+        if (state == GameState.RUNNING || state == GameState.LOSE || state == GameState.WIN) return
 
         injector.getInstance(Hud::class.java).hidePauseMenu()
         inputMultiplexer.addProcessor(playerControllerSystem.playerInputAdapter)
@@ -66,6 +67,12 @@ class GameManager @Inject() constructor(
         pause()
 
         state = GameState.LOSE
+    }
+
+    fun win() {
+        pause()
+
+        state = GameState.WIN
     }
 
     fun quit() {
