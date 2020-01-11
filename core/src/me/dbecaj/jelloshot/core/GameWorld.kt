@@ -181,6 +181,30 @@ class GameWorld @Inject constructor(
         return entity
     }
 
+    fun createRedMovingPlatform(position: Vector2, endPos: Vector2, speed: Float): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.redPlatformSprite()))
+            add(TransformComponent(position, 0F, 3F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.KinematicBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(4.2F, 0.7F)
+            }, 1.0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.RED_PLATFORM))
+            add(CollisionComponent(null))
+            add(MovingPlatformComponent(Vector2(position), endPos, speed))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
     fun createCoin(position: Vector2): Entity {
         val entity = Entity().apply {
             add(TextureRegionComponent(assetManager.coinSprite()))
