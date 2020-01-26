@@ -9,6 +9,7 @@ import com.google.inject.Injector
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.DisposalClass
 import me.dbecaj.jelloshot.core.GameManager
+import me.dbecaj.jelloshot.core.GameWorld
 import me.dbecaj.jelloshot.core.LevelBuilder
 
 @Singleton
@@ -25,6 +26,9 @@ class GameScreen @Inject() constructor(
         levelBuilder.initialize()
         val gameManager = injector.getInstance(GameManager::class.java)
         gameManager.init()
+
+        val gameWorld = injector.getInstance(GameWorld::class.java)
+        gameWorld.createTriangleMesh(10F, 10F, 4000F, 4000F)
     }
 
     override fun render(delta: Float) {

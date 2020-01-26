@@ -10,25 +10,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.google.cloud.firestore.Firestore
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import me.dbecaj.jelloshot.core.DisposalClass
 import me.dbecaj.jelloshot.core.GameAssetManager
-import me.dbecaj.jelloshot.core.GamePreferences
 import me.dbecaj.jelloshot.core.GuiCam
 
 @Singleton
-class MainMenuScreen @Inject() constructor(
+class ScoreboardScreen @Inject() constructor(
         private val screenManager: ScreenManager,
         private val assetManager: GameAssetManager,
         private @GuiCam val guiCam: OrthographicCamera,
         private val spriteBatch: SpriteBatch,
-        private val gamePreferences: GamePreferences
+        private val db: Firestore
 ) : Screen {
 
     private val viewport = FitViewport(guiCam.viewportWidth, guiCam.viewportHeight, guiCam)
@@ -38,6 +36,12 @@ class MainMenuScreen @Inject() constructor(
     override fun show() {
         // Setup input processor
         Gdx.input.inputProcessor = stage
+
+        val query = db.collection("scoreboard").get()
+        val querySnapshot = query.get()
+        querySnapshot.documents.forEach { doc ->
+            println("${doc.getString("username")}: ${doc.getLong("score")}")
+        }
 
         table = Table(assetManager.uiSkin()).apply {
             setFillParent(true)
@@ -52,35 +56,10 @@ class MainMenuScreen @Inject() constructor(
 
             // Buttons
             val buttonStyle = assetManager.uiSkin().get(TextButton.TextButtonStyle::class.java)
-
-            add(TextButton("Start", buttonStyle).apply {
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        screenManager.showScreen(ScreenEnum.LEVELS)
-                    }
-                })
-            }).expandX().top().width(500F).height(100F).pad(16F)
-            row()
-            add(TextButton("Scoreboard", buttonStyle).apply {
+            add(TextButton("Back", buttonStyle).apply {
                 addListener(object : ChangeListener() {
                     override fun changed(event: ChangeEvent?, actor: Actor?) {
                         screenManager.showScreen(ScreenEnum.SCOREBOARD)
-                    }
-                })
-            }).expandX().top().width(500F).height(100F).pad(16F)
-            row()
-            add(TextButton("Settings", buttonStyle).apply {
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        screenManager.showScreen(ScreenEnum.SETTINGS)
-                    }
-                })
-            }).expandX().top().width(500F).height(100F).pad(16F)
-            row()
-            add(TextButton("Exit", buttonStyle).apply {
-                addListener(object : ChangeListener() {
-                    override fun changed(event: ChangeEvent?, actor: Actor?) {
-                        Gdx.app.exit()
                     }
                 })
             }).expandX().top().width(500F).height(100F).pad(16F)

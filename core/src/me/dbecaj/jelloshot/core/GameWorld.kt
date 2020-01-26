@@ -21,7 +21,7 @@ class GameWorld @Inject constructor(
     fun createPlayer(position: Vector2): Entity {
         val bodies = mutableListOf<Body>()
         val entity = Entity().apply {
-            add(TextureRegionComponent(assetManager.playerSprite()))
+            add(PlayerAnimationComponent(assetManager.playerAnimBlinking(), assetManager.playerAgitatedSprite()))
             add(TransformComponent(position, 0F, 3F))
             add(PlayerComponent())
 
@@ -278,6 +278,17 @@ class GameWorld @Inject constructor(
 
             add(EntityTypeComponent(EntityType.CUP))
             add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
+    fun createTriangleMesh(x: Float, y: Float, width: Float, height: Float): Entity {
+        val entity = Entity().apply {
+            add(TransformComponent(Vector2(x, y), 0F, 3F))
+
+            add(MeshComponent(x, y, width, height))
         }
 
         engine.addEntity(entity)

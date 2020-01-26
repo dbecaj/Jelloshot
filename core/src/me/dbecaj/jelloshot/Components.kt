@@ -4,9 +4,11 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.ComponentMapper
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.utils.Array as GdxArray
 
 fun <T : Component?> Entity.hasComponent(componentClass: Class<T>?): Boolean {
     return this.getComponent(componentClass) != null
@@ -48,6 +50,8 @@ class PlayerComponent(): Component {
     var isOnGround = false
         get() = groundCollision > 0
 
+    var isDragging = false
+
     companion object : ComponentResolver<PlayerComponent>(PlayerComponent::class.java)
 }
 
@@ -81,6 +85,17 @@ class JellyComponent(val bodies: MutableList<Body>): Component {
 class MovingPlatformComponent(val startPos: Vector2, val endPos: Vector2, var speed: Float): Component {
     var forward = true
     companion object : ComponentResolver<MovingPlatformComponent>(MovingPlatformComponent::class.java)
+}
+
+class MeshComponent(val x: Float, val y: Float, val width: Float, val height: Float): Component {
+    companion object : ComponentResolver<MeshComponent>(MeshComponent::class.java)
+}
+
+/* This is used only by the player */
+class PlayerAnimationComponent(val blinkingFrames: GdxArray<TextureRegion>, val agitatedEyes: TextureRegion): Component {
+    val blinkingAnim = Animation(2F, blinkingFrames, Animation.PlayMode.LOOP)
+
+    companion object : ComponentResolver<PlayerAnimationComponent>(PlayerAnimationComponent::class.java)
 }
 
 open class ComponentResolver<T: Component>(componentClass: Class<T>) {

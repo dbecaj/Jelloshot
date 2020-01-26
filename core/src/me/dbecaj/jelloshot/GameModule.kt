@@ -6,6 +6,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.cloud.firestore.Firestore
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.cloud.FirestoreClient
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.google.inject.Provides
@@ -14,6 +19,7 @@ import me.dbecaj.jelloshot.core.GuiCam
 import me.dbecaj.jelloshot.core.HudSystem
 import me.dbecaj.jelloshot.core.pixelsToMeters
 import me.dbecaj.jelloshot.system.*
+import java.io.FileInputStream
 
 class GameModule : AbstractModule() {
 
@@ -124,11 +130,12 @@ class GameModule : AbstractModule() {
                 TranslationSystem::class.java,
                 PhysicsSystem::class.java,
                 PhysicsSynchronizationSystem::class.java,
-                //JellyRenderingSystem::class.java,
                 RenderingSystem::class.java,
-                PhysicsDebugSystem::class.java,
+                //PhysicsDebugSystem::class.java,
                 CollisionSystem::class.java,
                 HudSystem::class.java
+                //MeshRenderingSystem::class.java
+                //JellyRenderingSystem::class.java
         ).map { injector.getInstance(it) }
         .forEach { engine.addSystem(it) }
 
@@ -165,5 +172,18 @@ class GameModule : AbstractModule() {
     @GuiCam @Provides @Singleton
     fun guiCam(): OrthographicCamera = OrthographicCamera().apply {
         setToOrtho(false)
+    }
+
+    @Provides @Singleton
+    fun firestore(): Firestore {
+        // Credentials for firebase are stored in serviceAccount.json
+        val inputStream = FileInputStream("serviceAccount.json")
+        val credentials = GoogleCredentials.fromStream(inputStream)
+        val firebaseOptions = FirebaseOptions.Builder()
+                .setCredentials(credentials)
+                .build()
+        FirebaseApp.initializeApp(firebaseOptions)
+
+        return FirestoreClient.getFirestore()
     }
 }

@@ -2,9 +2,6 @@ package me.dbecaj.jelloshot.core
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.assets.loaders.SoundLoader
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
-import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -15,6 +12,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.io.File
 import java.io.FileFilter
+import com.badlogic.gdx.utils.Array as GdxArray
 
 
 @Singleton
@@ -52,9 +50,23 @@ class GameAssetManager @Inject constructor() {
         }
     }
 
-    fun playerSprite(): TextureRegion {
+    fun playerAnimBlinking(): GdxArray<TextureRegion> {
+        var array: GdxArray<TextureRegion> = GdxArray<TextureRegion>()
+        array.add(
+            TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+                setRegion(0, 32, 32, 32) // Default keyframe
+            },
+            TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+                setRegion(0, 32 * 2, 32, 32) // Blink keyframe
+            }
+        )
+
+        return array
+    }
+
+    fun playerAgitatedSprite(): TextureRegion {
         return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
-            setRegion(0, 32, 32, 32)
+            setRegion(32, 32 * 2, 32, 32) // Agitated eyes
         }
     }
 
