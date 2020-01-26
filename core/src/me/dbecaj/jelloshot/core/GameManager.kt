@@ -2,6 +2,7 @@ package me.dbecaj.jelloshot.core
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
+import com.google.cloud.firestore.Firestore
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
@@ -77,7 +78,31 @@ class GameManager @Inject() constructor(
 
     fun quit() {
         if (score > gamePreferences.highscore) {
+            // Save score locally
             gamePreferences.highscore = score
+
+            // Save score to cloud
+            val db = injector.getInstance(Firestore::class.java)
+            db.collection("scoreboard").whereEqualTo("username", gamePreferences.username).get().apply {
+                addListener({}, {
+                    if (isDone) {
+                        val result = this.get()
+                        // If user doesn't exist create new user
+                        if (result.documents.isEmpty()) {
+                            db.collection("scoreboard").add(mapOf(
+                                    "username" to gamePreferences.username,
+                                    "score" to gamePreferences.highscore
+                            ))
+                        }
+                        else {
+                            // Update the user score with the current highscore
+                            db.collection("scoreboard").document(result.documents[0].id).set(mapOf(
+                                    "score" to gamePreferences.highscore
+                            ))
+                        }
+                    }
+                })
+            }
         }
         score = 0
         state = GameState.RESTART

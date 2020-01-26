@@ -16,18 +16,20 @@ class GamePreferences @Inject() constructor(
     class UserScore constructor(val username: String, val score: Long)
 
     var highscore = -1
-        get() = pref.getInteger("highscore", 0);
+        get() = pref.getInteger("${username}.highscore", 0);
         set(value) {
-            pref.putInteger("highscore", value)
+            pref.putInteger("${username}.highscore", value)
             field = value
         }
 
     var soundVolume = -1f
-        get() = pref.getFloat("soundVolume", 0.5f);
+        get() = pref.getFloat("${username}.soundVolume", 0.5f);
         set(value) {
-            pref.putFloat("soundVolume", value)
+            pref.putFloat("${username}.soundVolume", value)
             field = value
         }
+
+    var username = ""
 
     companion object {
         fun save() {

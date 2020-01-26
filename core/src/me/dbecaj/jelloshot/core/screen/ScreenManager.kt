@@ -11,7 +11,8 @@ enum class ScreenEnum {
     MAIN_MENU,
     SETTINGS,
     LEVELS,
-    SCOREBOARD
+    SCOREBOARD,
+    USERNAME
 }
 
 @Singleton
@@ -28,7 +29,8 @@ class ScreenManager @Inject() constructor(
                 ScreenEnum.MAIN_MENU to MainMenuScreen::class.java,
                 ScreenEnum.SETTINGS to SettingsScreen::class.java,
                 ScreenEnum.LEVELS to LevelScreen::class.java,
-                ScreenEnum.SCOREBOARD to ScoreboardScreen::class.java
+                ScreenEnum.SCOREBOARD to ScoreboardScreen::class.java,
+                ScreenEnum.USERNAME to UsernameScreen::class.java
         )
     }
 

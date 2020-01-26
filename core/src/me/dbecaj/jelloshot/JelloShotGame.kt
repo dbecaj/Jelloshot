@@ -24,7 +24,7 @@ class JelloShotGame : Game() {
         injector.getInstance(Firestore::class.java)
 
         val screenManager = injector.getInstance(ScreenManager::class.java)
-        screenManager.showScreen(ScreenEnum.MAIN_MENU)
+        screenManager.showScreen(ScreenEnum.USERNAME)
     }
 
     override fun dispose() {
