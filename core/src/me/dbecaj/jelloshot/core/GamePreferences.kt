@@ -1,15 +1,19 @@
 package me.dbecaj.jelloshot.core
 
 import com.badlogic.gdx.Gdx
+import com.google.cloud.firestore.Firestore
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
 @Singleton
-class GamePreferences @Inject() constructor() {
+class GamePreferences @Inject() constructor(
+        private val db: Firestore
+) {
 
     private val prefFileName = "JelloShotPrefs";
 
-    private val pref = Gdx.app.getPreferences("JelloShotPrefs");
+    private val pref = Gdx.app.getPreferences("JelloShotPrefs")
+    class UserScore constructor(val username: String, val score: Long)
 
     var highscore = -1
         get() = pref.getInteger("highscore", 0);
