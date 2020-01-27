@@ -24,7 +24,7 @@ class GameManager @Inject() constructor(
         private val gamePreferences: GamePreferences,
         private val injector: Injector
 ) {
-    var score = 0
+    var score: Long = 0
     var state = GameState.RUNNING
 
     var inputMultiplexer: InputMultiplexer = InputMultiplexer()
@@ -80,30 +80,33 @@ class GameManager @Inject() constructor(
         if (score > gamePreferences.highscore) {
             // Save score locally
             gamePreferences.highscore = score
+        }
 
-            // Save score to cloud
-            val db = injector.getInstance(Firestore::class.java)
-            db.collection("scoreboard").whereEqualTo("username", gamePreferences.username).get().apply {
-                addListener({}, {
-                    if (isDone) {
-                        val result = this.get()
-                        // If user doesn't exist create new user
-                        if (result.documents.isEmpty()) {
-                            db.collection("scoreboard").add(mapOf(
-                                    "username" to gamePreferences.username,
-                                    "score" to gamePreferences.highscore
-                            ))
-                        }
-                        else {
-                            // Update the user score with the current highscore
+        // Save score to cloud
+        val db = injector.getInstance(Firestore::class.java)
+        db.collection("scoreboard").whereEqualTo("username", gamePreferences.username).get().apply {
+            addListener({}, {
+                if (isDone) {
+                    val result = this.get()
+                    // If user doesn't exist create new user
+                    if (result.documents.isEmpty()) {
+                        db.collection("scoreboard").add(mapOf(
+                                "username" to gamePreferences.username,
+                                "score" to gamePreferences.highscore
+                        ))
+                    }
+                    else {
+                        // Update the user score with the current highscore
+                        if (score > gamePreferences.highscore) {
                             db.collection("scoreboard").document(result.documents[0].id).set(mapOf(
                                     "score" to gamePreferences.highscore
                             ))
                         }
                     }
-                })
-            }
+                }
+            })
         }
+
         score = 0
         state = GameState.RESTART
         injector.getInstance(Hud::class.java).hidePauseMenu()

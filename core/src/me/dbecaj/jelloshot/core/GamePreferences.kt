@@ -14,11 +14,29 @@ class GamePreferences @Inject() constructor(
 
     private val pref = Gdx.app.getPreferences("JelloShotPrefs")
     class UserScore constructor(val username: String, val score: Long)
-
-    var highscore = -1
-        get() = pref.getInteger("${username}.highscore", 0);
+    var username = ""
         set(value) {
-            pref.putInteger("${username}.highscore", value)
+            field = value
+
+            // Update highscore if user exists in firebase
+            db.collection("scoreboard").whereEqualTo("username", username).get().apply {
+                addListener({}, {
+                    if (isDone) {
+                        val result = this.get()
+                        // If user exists override his highscore with his online highscore
+                        if (!result.documents.isEmpty()) {
+                            println("Setting online highscore")
+                            highscore = result.documents[0].getLong("score")!!
+                        }
+                    }
+                })
+            }
+        }
+
+    var highscore: Long = -1
+        get() = pref.getLong("${username}.highscore")
+        set(value) {
+            pref.putLong("${username}.highscore", value)
             field = value
         }
 
@@ -28,8 +46,6 @@ class GamePreferences @Inject() constructor(
             pref.putFloat("${username}.soundVolume", value)
             field = value
         }
-
-    var username = ""
 
     companion object {
         fun save() {

@@ -5,14 +5,19 @@ import com.badlogic.gdx.maps.objects.PolylineMapObject
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Polyline
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.PolygonShape
+import com.badlogic.gdx.physics.box2d.World
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import me.dbecaj.jelloshot.transform
 
 @Singleton
 class LevelBuilder @Inject constructor(
         private val engine: Engine,
         private val gameWorld: GameWorld,
-        private val assetManager: GameAssetManager
+        private val assetManager: GameAssetManager,
+        private val world: World
 ) {
 
     fun Polyline.getPoints(): List<Vector2> {
@@ -37,6 +42,23 @@ class LevelBuilder @Inject constructor(
                     when (cell.tile.id) {
                         1 -> {
                             gameWorld.createGround(position)
+                            // Create invisible walls at the start and end of level
+                            if (x == 0 || x == tileLayer.width-1) {
+                                val body = world.createBody(BodyDef().apply {
+                                    type = BodyDef.BodyType.StaticBody
+                                })
+                                val width = 10F
+                                body.createFixture(PolygonShape().apply {
+                                    setAsBox(width, 80F)
+                                }, 1.0F)
+                                val wallPos = if (x == 0) {
+                                    Vector2(position.x - width - 1F, position.y)
+                                }
+                                else {
+                                    Vector2(position.x + width + 1F, position.y)
+                                }
+                                body.setTransform(wallPos, 0F)
+                            }
                             position.y = position.y - 2
                             for (i in 0 until 5) {
                                 gameWorld.createDirt(position)

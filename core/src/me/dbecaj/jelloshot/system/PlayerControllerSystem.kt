@@ -50,6 +50,9 @@ class PlayerControllerSystem @Inject constructor(
         val playerPos = entity.physics.body.position
 
         camera.position.set(Vector3(playerPos.x, playerPos.y, 0F))
+        // Clip the camera to the start of the render space so we don't show the void outside
+        if (camera.position.x < 21.5F) camera.position.x = 21.5F
+        if (camera.position.y < 7F) camera.position.y  = 7F
         camera.update()
     }
 
