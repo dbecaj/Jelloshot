@@ -10,19 +10,21 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.World
 import com.google.inject.Inject
+import com.google.inject.Injector
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.PlayerComponent
 import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.GamePreferences
+import me.dbecaj.jelloshot.core.LevelBuilder
 import me.dbecaj.jelloshot.core.toVector2
 import me.dbecaj.jelloshot.physics
 
 @Singleton
 class PlayerControllerSystem @Inject constructor(
-        private val world: World,
         private val camera: OrthographicCamera,
         private val assetManager: GameAssetManager,
-        private val gamePreferences: GamePreferences
+        private val gamePreferences: GamePreferences,
+        private val injector: Injector
 ) : IteratingSystem(Family.all(PlayerComponent::class.java).get()) {
 
     private var startDragPos: Vector2 = Vector2()
@@ -48,10 +50,13 @@ class PlayerControllerSystem @Inject constructor(
 
         // Camera follows player
         val playerPos = entity.physics.body.position
+        val levelBuilder = injector.getInstance(LevelBuilder::class.java)
+        println(playerPos)
 
         camera.position.set(Vector3(playerPos.x, playerPos.y, 0F))
         // Clip the camera to the start of the render space so we don't show the void outside
         if (camera.position.x < 21.5F) camera.position.x = 21.5F
+        if (camera.position.x > levelBuilder.levelWidth-23.5F) camera.position.x = levelBuilder.levelWidth - 23.5F
         if (camera.position.y < 7F) camera.position.y  = 7F
         camera.update()
     }

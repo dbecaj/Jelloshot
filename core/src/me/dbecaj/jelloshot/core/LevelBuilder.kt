@@ -20,6 +20,8 @@ class LevelBuilder @Inject constructor(
         private val world: World
 ) {
 
+    var levelWidth = -1.0F
+
     fun Polyline.getPoints(): List<Vector2> {
         val points = arrayListOf<Vector2>()
 
@@ -32,6 +34,7 @@ class LevelBuilder @Inject constructor(
 
     fun initialize() {
         val tileLayer = assetManager.level().layers.get("Level") as TiledMapTileLayer
+        levelWidth = tileLayer.width * 2F
 
         for (y in 0 until tileLayer.height) {
             for (x in 0 until tileLayer.width) {
@@ -52,6 +55,7 @@ class LevelBuilder @Inject constructor(
                                     setAsBox(width, 80F)
                                 }, 1.0F)
                                 val wallPos = if (x == 0) {
+                                    // Subtract or add 1F because it's the size of the ground box
                                     Vector2(position.x - width - 1F, position.y)
                                 }
                                 else {
