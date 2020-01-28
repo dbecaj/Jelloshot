@@ -51,7 +51,6 @@ class PlayerControllerSystem @Inject constructor(
         // Camera follows player
         val playerPos = entity.physics.body.position
         val levelBuilder = injector.getInstance(LevelBuilder::class.java)
-        println(playerPos)
 
         camera.position.set(Vector3(playerPos.x, playerPos.y, 0F))
         // Clip the camera to the start of the render space so we don't show the void outside
