@@ -13,11 +13,9 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.PlayerComponent
-import me.dbecaj.jelloshot.core.GameAssetManager
-import me.dbecaj.jelloshot.core.GamePreferences
-import me.dbecaj.jelloshot.core.LevelBuilder
-import me.dbecaj.jelloshot.core.toVector2
+import me.dbecaj.jelloshot.core.*
 import me.dbecaj.jelloshot.physics
+import java.util.*
 
 @Singleton
 class PlayerControllerSystem @Inject constructor(
@@ -35,9 +33,10 @@ class PlayerControllerSystem @Inject constructor(
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
         if (move) { //&& playerComponent.isOnGround) {
             assetManager.jumpSound().play(gamePreferences.soundVolume)
-            val movementVector = startDragPos.sub(endDragPos).scl(2F)
+            val launchPower = injector.getInstance(GameManager::class.java).launchPower
+            val movementVector = startDragPos.sub(endDragPos).scl(launchPower)
 
-            val vectorLenLimit = 45
+            val vectorLenLimit = launchPower * 22 // 22 is a magic number I tested in game
             // Limit the vector length
             if (movementVector.len() > vectorLenLimit) {
                 movementVector.scl(vectorLenLimit / movementVector.len())
@@ -58,6 +57,12 @@ class PlayerControllerSystem @Inject constructor(
         if (camera.position.x > levelBuilder.levelWidth-23.5F) camera.position.x = levelBuilder.levelWidth - 23.5F
         if (camera.position.y < 7F) camera.position.y  = 7F
         camera.update()
+
+        // Check for the power up timeout
+        val gameManager = injector.getInstance(GameManager::class.java)
+        if (gameManager.launchPower != 2F && gameManager.launchPowerChangeDate.before(Date())) {
+            gameManager.launchPower = 2F
+        }
     }
 
     public val playerInputAdapter = object : InputAdapter() {

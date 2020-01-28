@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Singleton
 class Hud @Inject() constructor(
@@ -32,7 +34,7 @@ class Hud @Inject() constructor(
     private val table: Table
     private val pauseMenu: Table
     private val scoreLabel: Label
-    private val highscoreLabel: Label
+    private val powerUpLabel: Label
 
     init {
         // Create pause menu
@@ -86,8 +88,9 @@ class Hud @Inject() constructor(
                 })
             }).pad(16F)
             row()
-            highscoreLabel = Label("Highscore: 0", assetManager.uiSkin())
-            add(highscoreLabel).left().top().padLeft(16F).expandX()
+            powerUpLabel = Label("Powerup(GREEN) duration: 00:00:00", assetManager.uiSkin())
+            powerUpLabel.isVisible = false
+            add(powerUpLabel).left().top().padLeft(16F).expandX()
         }
 
         stage.addActor(table)
@@ -95,7 +98,17 @@ class Hud @Inject() constructor(
 
     fun update(deltaTime: Float) {
         scoreLabel.setText("Score: ${gameManager.score}")
-        highscoreLabel.setText("Highscore: ${gamePreferences.highscore}")
+
+        if (gameManager.launchPower > 2F) {
+            powerUpLabel.isVisible = true
+            val powerUpType = if (gameManager.launchPower == 3F) { "GREEN" } else { "RED" }
+            val powerUpDuration = gameManager.launchPowerChangeDate.time - Date().time
+            val dateFormat = SimpleDateFormat("mm:ss")
+            powerUpLabel.setText("Powerup[$powerUpType]: ${dateFormat.format(powerUpDuration)}")
+        }
+        else {
+            powerUpLabel.isVisible = false
+        }
 
         stage.act(deltaTime)
     }

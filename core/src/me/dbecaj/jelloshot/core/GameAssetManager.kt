@@ -100,6 +100,18 @@ class GameAssetManager @Inject constructor() {
         }
     }
 
+    fun greenCanSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(3 * 32, 2 * 32, 32, 32)
+        }
+    }
+
+    fun redCanSprite(): TextureRegion {
+        return TextureRegion(assetManager.get(atlasFile, Texture::class.java)).apply {
+            setRegion(4 * 32, 2 * 32, 32, 32)
+        }
+    }
+
     fun loadLevel(file: File) {
         // Check if the level is already loaded
         if (loadedLevelPath == file.path) return

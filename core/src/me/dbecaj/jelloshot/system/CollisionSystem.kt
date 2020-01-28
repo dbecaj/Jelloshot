@@ -11,6 +11,7 @@ import me.dbecaj.jelloshot.core.GameAssetManager
 import me.dbecaj.jelloshot.core.GameManager
 import me.dbecaj.jelloshot.core.GamePreferences
 import me.dbecaj.jelloshot.core.GameState
+import java.util.*
 
 @Singleton
 class CollisionSystem @Inject() constructor(
@@ -38,18 +39,20 @@ class CollisionSystem @Inject() constructor(
                             assetManager.deathSound().play(gamePreferences.soundVolume)
                             gameManager.lose()
                         }
-                        /*println("Touching red platfrom")
-                        val centerPos = entity.physics.body.position
-                        val jelly = entity.getComponent(JellyComponent::class.java)
-                        for (body in jelly.bodies) {
-                            // Move outer circles closer to the inner one
-                            val newPos = Vector2(body.position)
-                            newPos.sub(centerPos).scl(0.8F).add(centerPos)
-                            body.setTransform(newPos, body.angle)
-
-                            // Make the outer circles smaller
-                            body.fixtureList[0].shape.radius = body.fixtureList[0].shape.radius * 0.99F;
-                        }*/
+                    }
+                    EntityType.GREEN_CAN -> {
+                        gameManager.launchPower = 3F
+                        val calendar = Calendar.getInstance()
+                        calendar.add(Calendar.SECOND, 30)
+                        gameManager.launchPowerChangeDate = calendar.time
+                        engine.removeEntity(cc)
+                    }
+                    EntityType.RED_CAN -> {
+                        gameManager.launchPower = 4F
+                        val calendar = Calendar.getInstance()
+                        calendar.add(Calendar.SECOND, 30)
+                        gameManager.launchPowerChangeDate = calendar.time
+                        engine.removeEntity(cc)
                     }
                     EntityType.CUP -> {
                         engine.removeEntity(cc)

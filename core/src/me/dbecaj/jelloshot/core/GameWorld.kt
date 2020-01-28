@@ -284,6 +284,52 @@ class GameWorld @Inject constructor(
         return entity
     }
 
+    fun createGreenCan(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.greenCanSprite()))
+            add(TransformComponent(position, 0F, 3F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.StaticBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(1F, 1F)
+            }, 0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.GREEN_CAN))
+            add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
+    fun createRedCan(position: Vector2): Entity {
+        val entity = Entity().apply {
+            add(TextureRegionComponent(assetManager.redCanSprite()))
+            add(TransformComponent(position, 0F, 3F))
+
+            val body = world.createBody(BodyDef().apply {
+                type = BodyDef.BodyType.StaticBody
+            })
+            body.createFixture(PolygonShape().apply {
+                setAsBox(1F, 1F)
+            }, 0F)
+            body.setTransform(transform.position, 0F)
+            body.userData = this
+            add(PhysicsComponent(body))
+
+            add(EntityTypeComponent(EntityType.RED_CAN))
+            add(CollisionComponent(null))
+        }
+
+        engine.addEntity(entity)
+        return entity
+    }
+
     fun createTriangleMesh(x: Float, y: Float, width: Float, height: Float): Entity {
         val entity = Entity().apply {
             add(TransformComponent(Vector2(x, y), 0F, 3F))

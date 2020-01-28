@@ -106,7 +106,13 @@ class GameModule : AbstractModule() {
                             val entity1Type = entity1.getComponent(EntityTypeComponent::class.java).entityType
                             val entity2Type = entity2.getComponent(EntityTypeComponent::class.java).entityType
 
-                            val nonCollidingEntities = arrayOf(EntityType.COIN, EntityType.CUP)
+                            // Set entites to ignore
+                            val nonCollidingEntities = arrayOf(
+                                    EntityType.COIN,
+                                    EntityType.CUP,
+                                    EntityType.GREEN_CAN,
+                                    EntityType.RED_CAN
+                            )
                             if (nonCollidingEntities.contains(entity1Type) || nonCollidingEntities.contains(entity2Type)) {
                                 contact.isEnabled = false
                             }

@@ -9,6 +9,7 @@ import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.screen.ScreenEnum
 import me.dbecaj.jelloshot.core.screen.ScreenManager
 import me.dbecaj.jelloshot.system.PlayerControllerSystem
+import java.util.*
 
 enum class GameState {
     RUNNING,
@@ -26,6 +27,8 @@ class GameManager @Inject() constructor(
 ) {
     var score: Long = 0
     var state = GameState.RUNNING
+    var launchPower = 2F // Is the scalar value we multiply the movement vector for the player
+    var launchPowerChangeDate = Date()
 
     var inputMultiplexer: InputMultiplexer = InputMultiplexer()
 
@@ -58,6 +61,7 @@ class GameManager @Inject() constructor(
             gamePreferences.highscore = score
         }
         score = 0
+        launchPower = 2F
         injector.getInstance(LevelBuilder::class.java).reinitialize()
 
         state = GameState.RESTART
@@ -108,6 +112,7 @@ class GameManager @Inject() constructor(
         }
 
         score = 0
+        launchPower = 2F
         state = GameState.RESTART
         injector.getInstance(Hud::class.java).hidePauseMenu()
 

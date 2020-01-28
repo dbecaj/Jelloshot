@@ -61,7 +61,9 @@ enum class EntityType {
     GREEN_PLATFORM,
     RED_PLATFORM,
     GROUND,
-    CUP
+    CUP,
+    GREEN_CAN,
+    RED_CAN
 }
 
 class EntityTypeComponent(val entityType: EntityType) : Component {

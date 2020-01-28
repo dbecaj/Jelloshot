@@ -74,6 +74,8 @@ class LevelBuilder @Inject constructor(
                         6 -> gameWorld.createPlayer(position)
                         7 -> gameWorld.createRedPlatform(position)
                         13 -> gameWorld.createCup(position)
+                        14 -> gameWorld.createGreenCan(position)
+                        15 -> gameWorld.createRedCan(position)
                     }
                 }
             }
