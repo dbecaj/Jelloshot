@@ -22,7 +22,7 @@ class GameAssetManager @Inject constructor() {
         val levelList = Gdx.files.internal("core/assets/levels").list(FileFilter { file -> file.extension == "tmx" })
                 .map { it.file() }
         private lateinit var loadedLevel: TiledMap
-        private var loadedLevelPath = "" // This is used to check if we already have the level loaded in loadLevel()
+        var loadedLevelPath = "" // This is used to check if we already have the level loaded in loadLevel()
 
         private const val atlasFile = "atlas.png"
 
@@ -30,6 +30,8 @@ class GameAssetManager @Inject constructor() {
         private const val coinPickupFile = "sounds/coin_pickup.mp3"
         private const val jumpFile = "sounds/jump.mp3"
         private const val deathFile = "sounds/death.mp3"
+        private const val cupFile = "sounds/cup.mp3"
+        private const val powerUpFile = "sounds/powerup.mp3"
     }
 
     private val assetManager: AssetManager = AssetManager()
@@ -40,6 +42,8 @@ class GameAssetManager @Inject constructor() {
         assetManager.load(coinPickupFile, Sound::class.java)
         assetManager.load(jumpFile, Sound::class.java)
         assetManager.load(deathFile, Sound::class.java)
+        assetManager.load(cupFile, Sound::class.java)
+        assetManager.load(powerUpFile, Sound::class.java)
 
         assetManager.finishLoading()
     }
@@ -139,6 +143,15 @@ class GameAssetManager @Inject constructor() {
     fun jumpSound(): Sound {
         return assetManager.get(jumpFile, Sound::class.java)
     }
+
+    fun cupSound(): Sound {
+        return assetManager.get(cupFile, Sound::class.java)
+    }
+
+    fun powerUpSound(): Sound {
+        return assetManager.get(powerUpFile, Sound::class.java)
+    }
+
 
     fun dispose() {
         assetManager.dispose()

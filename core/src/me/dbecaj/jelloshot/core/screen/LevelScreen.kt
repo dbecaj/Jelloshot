@@ -50,18 +50,21 @@ class LevelScreen @Inject() constructor(
             val textureRegionDrawableBg = TextureRegionDrawable(TextureRegion(Texture(bgPixmap)))
             background = textureRegionDrawableBg
 
-            // Level selector buttons
             val buttonStyle = assetManager.uiSkin().get(TextButton.TextButtonStyle::class.java)
-            GameAssetManager.levelList.forEach{ file ->
-                add(TextButton(file.nameWithoutExtension, buttonStyle).apply {
-                    addListener(object : ChangeListener() {
-                        override fun changed(event: ChangeEvent?, actor: Actor?) {
-                            gameAssetManager.loadLevel(file)
-                            screenManager.showScreen(ScreenEnum.GAME)
-                        }
-                    })
-                }).center().width(100F).height(100F).pad(32F)
+            // Level selector buttons
+            val levelSelectTable = Table(assetManager.uiSkin()).apply {
+                GameAssetManager.levelList.forEach{ file ->
+                    add(TextButton(file.nameWithoutExtension, buttonStyle).apply {
+                        addListener(object : ChangeListener() {
+                            override fun changed(event: ChangeEvent?, actor: Actor?) {
+                                gameAssetManager.loadLevel(file)
+                                screenManager.showScreen(ScreenEnum.GAME)
+                            }
+                        })
+                    }).width(100F).height(100F).pad(32F)
+                }
             }
+            add(levelSelectTable)
 
             // Buttons
             row()

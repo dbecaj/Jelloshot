@@ -9,6 +9,7 @@ import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.screen.ScreenEnum
 import me.dbecaj.jelloshot.core.screen.ScreenManager
 import me.dbecaj.jelloshot.system.PlayerControllerSystem
+import java.io.File
 import java.util.*
 
 enum class GameState {
@@ -25,7 +26,8 @@ class GameManager @Inject() constructor(
         private val gamePreferences: GamePreferences,
         private val injector: Injector
 ) {
-    var score: Long = 0
+    var totalScore: Long = 0
+    var currentLevelScore: Long = 0
     var state = GameState.RUNNING
     var launchPower = 2F // Is the scalar value we multiply the movement vector for the player
     var launchPowerChangeDate = Date()
@@ -36,6 +38,7 @@ class GameManager @Inject() constructor(
         inputMultiplexer = InputMultiplexer(injector.getInstance(Hud::class.java).stage,
                                             playerControllerSystem.playerInputAdapter)
         Gdx.input.inputProcessor = inputMultiplexer
+        state = GameState.RUNNING
     }
 
     fun pause() {
@@ -57,10 +60,8 @@ class GameManager @Inject() constructor(
     }
 
     fun restart() {
-        if (score > gamePreferences.highscore) {
-            gamePreferences.highscore = score
-        }
-        score = 0
+        totalScore -= currentLevelScore
+        currentLevelScore = 0
         launchPower = 2F
         injector.getInstance(LevelBuilder::class.java).reinitialize()
 
@@ -75,15 +76,8 @@ class GameManager @Inject() constructor(
     }
 
     fun win() {
-        pause()
-
-        state = GameState.WIN
-    }
-
-    fun quit() {
-        if (score > gamePreferences.highscore) {
-            // Save score locally
-            gamePreferences.highscore = score
+        if (totalScore > gamePreferences.totalScore) {
+            gamePreferences.totalScore = totalScore
         }
 
         // Save score to cloud
@@ -96,22 +90,42 @@ class GameManager @Inject() constructor(
                     if (result.documents.isEmpty()) {
                         db.collection("scoreboard").add(mapOf(
                                 "username" to gamePreferences.username,
-                                "score" to gamePreferences.highscore
+                                "score" to gamePreferences.totalScore
                         ))
                     }
                     else {
+                        val userScore = GamePreferences.UserScore(result.documents[0].getString("username")!!, result.documents[0].getLong("score")!!)
                         // Update the user score with the current highscore
-                        if (score > gamePreferences.highscore) {
+                        if (userScore.score < gamePreferences.totalScore) {
+                            println("Updating user score ${gamePreferences.totalScore}")
                             db.collection("scoreboard").document(result.documents[0].id).set(mapOf(
-                                    "score" to gamePreferences.highscore
+                                    "username" to userScore.username,
+                                    "score" to gamePreferences.totalScore
                             ))
                         }
                     }
                 }
             })
         }
+        state = GameState.WIN
 
-        score = 0
+        pause()
+    }
+
+    // Move to the next level
+    fun nextLevel(levelFile: File) {
+        launchPower = 2F
+        currentLevelScore = 0
+
+        injector.getInstance(GameAssetManager::class.java).loadLevel(levelFile)
+        val levelBuilder = injector.getInstance(LevelBuilder::class.java)
+        levelBuilder.reinitialize()
+        unpause()
+    }
+
+    fun quit() {
+        totalScore = 0
+        currentLevelScore = 0
         launchPower = 2F
         state = GameState.RESTART
         injector.getInstance(Hud::class.java).hidePauseMenu()

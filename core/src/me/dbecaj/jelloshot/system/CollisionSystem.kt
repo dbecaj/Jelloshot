@@ -3,7 +3,6 @@ package me.dbecaj.jelloshot.system
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.math.Vector2
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.*
@@ -24,13 +23,14 @@ class CollisionSystem @Inject() constructor(
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val cc = entity.collision.collisionEntity
-        if (cc != null) {
+        if (cc != null && gameManager.state == GameState.RUNNING) {
             // Check if entity has type component
             if (cc.getComponent(EntityTypeComponent::class.java) != null) {
                 // Process the collision
                 when (cc.entityType.entityType) {
                     EntityType.COIN -> {
-                        gameManager.score += 10
+                        gameManager.totalScore += 10
+                        gameManager.currentLevelScore += 10
                         engine.removeEntity(cc)
                         assetManager.coinPickupSound().play(gamePreferences.soundVolume)
                     }
@@ -41,6 +41,7 @@ class CollisionSystem @Inject() constructor(
                         }
                     }
                     EntityType.GREEN_CAN -> {
+                        assetManager.powerUpSound().play(gamePreferences.soundVolume)
                         gameManager.launchPower = 3F
                         val calendar = Calendar.getInstance()
                         calendar.add(Calendar.SECOND, 30)
@@ -48,6 +49,7 @@ class CollisionSystem @Inject() constructor(
                         engine.removeEntity(cc)
                     }
                     EntityType.RED_CAN -> {
+                        assetManager.powerUpSound().play(gamePreferences.soundVolume)
                         gameManager.launchPower = 4F
                         val calendar = Calendar.getInstance()
                         calendar.add(Calendar.SECOND, 30)
@@ -55,6 +57,7 @@ class CollisionSystem @Inject() constructor(
                         engine.removeEntity(cc)
                     }
                     EntityType.CUP -> {
+                        assetManager.cupSound().play(gamePreferences.soundVolume)
                         engine.removeEntity(cc)
                         gameManager.win()
                     }

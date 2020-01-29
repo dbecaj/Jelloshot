@@ -20,7 +20,6 @@ import com.google.cloud.firestore.Firestore
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.dbecaj.jelloshot.core.GameAssetManager
-import me.dbecaj.jelloshot.core.GamePreferences
 import me.dbecaj.jelloshot.core.GuiCam
 
 @Singleton
@@ -45,7 +44,7 @@ class ScoreboardScreen @Inject() constructor(
 
         table = Table(assetManager.uiSkin()).apply {
             setFillParent(true)
-            debug = true
+            debug = false
 
             // Background
             val bgPixmap = Pixmap(1, 1, Pixmap.Format.RGB565)
@@ -57,24 +56,34 @@ class ScoreboardScreen @Inject() constructor(
             add(Label("Scoreboard", assetManager.uiSkin())).padTop(16F)
             row()
             scoreTable = Table(assetManager.uiSkin()).apply {
-                debug = true
-            }
-            add(scoreTable).expandX().expandY()
-            row()
-            db.collection("scoreboard").get().apply {
-                addListener({}, {
-                    if (isDone) {
-                        var counter = 1
-                        this.get().documents.forEach { doc ->
-                            val userScore = UserScore(doc.getString("username")!!, doc.getLong("score")!!)
-                            scoreTable.add(Label(counter++.toString(), assetManager.uiSkin())).expandX().expandY().top()
-                            scoreTable.add(Label(userScore.username, assetManager.uiSkin())).top()
-                            scoreTable.add(Label(userScore.score.toString(), assetManager.uiSkin())).top()
-                            scoreTable.row()
+                debug = false
+                top().left()
+
+                // Background
+                val scoreTabelPixmap = Pixmap(1, 1, Pixmap.Format.RGB565)
+                scoreTabelPixmap.setColor(Color.FOREST)
+                scoreTabelPixmap.fill()
+                val scoreTextureRegionDrawableBg = TextureRegionDrawable(TextureRegion(Texture(scoreTabelPixmap)))
+                background = scoreTextureRegionDrawableBg
+
+                db.collection("scoreboard").get().apply {
+                    addListener({}, {
+                        if (isDone) {
+                            // Sort documents by score
+                            val scoreList = this.get().documents.map { doc -> UserScore(doc.getString("username")!!, doc.getLong("score")!!) }
+                            var counter = 1
+                            scoreList.sortedByDescending { it.score }.forEach { userScore ->
+                                add(Label(counter++.toString(), assetManager.uiSkin())).expandX().left().padTop(12F).padBottom(12F).padLeft(8F)
+                                add(Label(userScore.username, assetManager.uiSkin())).expandX().left().padTop(12F).padBottom(12F)
+                                add(Label(userScore.score.toString(), assetManager.uiSkin())).expandX().left().padTop(12F).padBottom(12F)
+                                row()
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
+            add(scoreTable).expandY().width(600F).height(500F)
+            row()
 
             // Buttons
             val buttonStyle = assetManager.uiSkin().get(TextButton.TextButtonStyle::class.java)

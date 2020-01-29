@@ -137,7 +137,7 @@ class GameModule : AbstractModule() {
                 PhysicsSystem::class.java,
                 PhysicsSynchronizationSystem::class.java,
                 RenderingSystem::class.java,
-                //PhysicsDebugSystem::class.java,
+                PhysicsDebugSystem::class.java,
                 CollisionSystem::class.java,
                 HudSystem::class.java
                 //MeshRenderingSystem::class.java

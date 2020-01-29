@@ -25,18 +25,17 @@ class GamePreferences @Inject() constructor(
                         val result = this.get()
                         // If user exists override his highscore with his online highscore
                         if (!result.documents.isEmpty()) {
-                            println("Setting online highscore")
-                            highscore = result.documents[0].getLong("score")!!
+                            totalScore = result.documents[0].getLong("score")!!
                         }
                     }
                 })
             }
         }
 
-    var highscore: Long = -1
-        get() = pref.getLong("${username}.highscore")
+    var totalScore: Long = -1
+        get() = pref.getLong("${username}.totalScore")
         set(value) {
-            pref.putLong("${username}.highscore", value)
+            pref.putLong("${username}.totalScore", value)
             field = value
         }
 
