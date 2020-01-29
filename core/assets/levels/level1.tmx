@@ -16,7 +16,7 @@
   <object id="9" type="MOVING_PLATFORM_RED" x="1632" y="1408">
    <polyline points="0,0 0,-256.5"/>
   </object>
-  <object id="10" type="MOVING_PLATFORM_RED" x="1888" y="1248">
+  <object id="10" type="MOVING_PLATFORM_GREEN" x="1888" y="1248">
    <polyline points="0,0 0,-318.667"/>
   </object>
  </objectgroup>
