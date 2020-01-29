@@ -26,7 +26,7 @@ class LevelBuilder @Inject constructor(
         val points = arrayListOf<Vector2>()
 
         for (i in 0 until this.transformedVertices.size/2) {
-            points.add(Vector2(this.transformedVertices[i*2].pixelsToMeters * 1.5F, this.transformedVertices[i*2+1].pixelsToMeters * 2))
+            points.add(Vector2(this.transformedVertices[i*2].pixelsToMeters * 2F, this.transformedVertices[i*2+1].pixelsToMeters * 2F))
         }
 
         return points

@@ -70,12 +70,14 @@ class GameManager @Inject() constructor(
     }
 
     fun lose() {
-        pause()
-
         state = GameState.LOSE
+
+        pause()
     }
 
     fun win() {
+        state = GameState.WIN
+
         if (totalScore > gamePreferences.totalScore) {
             gamePreferences.totalScore = totalScore
         }
@@ -107,7 +109,6 @@ class GameManager @Inject() constructor(
                 }
             })
         }
-        state = GameState.WIN
 
         pause()
     }

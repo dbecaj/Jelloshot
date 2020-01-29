@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
-import me.dbecaj.jelloshot.core.DisposalClass
-import me.dbecaj.jelloshot.core.GameManager
-import me.dbecaj.jelloshot.core.GameWorld
-import me.dbecaj.jelloshot.core.LevelBuilder
+import me.dbecaj.jelloshot.core.*
 
 @Singleton
 class GameScreen @Inject() constructor(
@@ -32,8 +29,7 @@ class GameScreen @Inject() constructor(
     }
 
     override fun render(delta: Float) {
-        //Gdx.gl.glClearColor(0.53f, 0.81f, 235f, 0.92f)
-        Gdx.gl.glClearColor(0F, 0F, 0F, 1F)
+        Gdx.gl.glClearColor(78F.rgbToUnit, 99F.rgbToUnit, 194F.rgbToUnit, 1F)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         engine.update(delta)

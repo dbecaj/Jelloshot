@@ -50,6 +50,9 @@ class PhysicsDebugSystem @Inject constructor(private val world: World,
     private val renderer = Box2DDebugRenderer()
 
     override fun update(deltaTime: Float) {
+        renderer.isDrawBodies = false
+        renderer.isDrawInactiveBodies = false
+        renderer.isDrawAABBs = false
         renderer.render(world, camera.combined)
     }
 }

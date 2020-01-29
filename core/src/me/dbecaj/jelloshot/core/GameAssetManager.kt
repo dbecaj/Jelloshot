@@ -20,7 +20,7 @@ class GameAssetManager @Inject constructor() {
 
     companion object {
         val levelList = Gdx.files.internal("core/assets/levels").list(FileFilter { file -> file.extension == "tmx" })
-                .map { it.file() }
+                .map { it.file() }.sortedBy { it.nameWithoutExtension }
         private lateinit var loadedLevel: TiledMap
         var loadedLevelPath = "" // This is used to check if we already have the level loaded in loadLevel()
 

@@ -36,7 +36,9 @@ class Hud @Inject() constructor(
     private val powerUpLabel: Label
 
     init {
-        scoreLabel = Label("Score: 0", assetManager.uiSkin())
+        scoreLabel = Label("Score: 0", assetManager.uiSkin()).apply {
+            color = Color(20F.rgbToUnit, 20F.rgbToUnit, 20F.rgbToUnit, 1F)
+        }
         table = Table(assetManager.uiSkin()).apply {
             setFillParent(true)
             setDebug(false)
@@ -56,7 +58,9 @@ class Hud @Inject() constructor(
                 })
             }).padTop(16F).padRight(16F)
             row()
-            powerUpLabel = Label("Powerup(GREEN) duration: 00:00:00", assetManager.uiSkin())
+            powerUpLabel = Label("Powerup(GREEN) duration: 00:00:00", assetManager.uiSkin()).apply {
+                color = Color(20F.rgbToUnit, 20F.rgbToUnit, 20F.rgbToUnit, 1F)
+            }
             powerUpLabel.isVisible = false
             add(powerUpLabel).left().top().expandX().padLeft(16F)
         }
@@ -94,11 +98,21 @@ class Hud @Inject() constructor(
 
             left().top()
             val bgPixmap = Pixmap(1, 1, Pixmap.Format.RGB565)
-            bgPixmap.setColor(Color.LIGHT_GRAY)
+            bgPixmap.setColor(Color(227F.rgbToUnit, 129F.rgbToUnit, 18F.rgbToUnit, 1F))
             bgPixmap.fill()
             val textureRegionDrawableBg = TextureRegionDrawable(TextureRegion(Texture(bgPixmap)))
             background = textureRegionDrawableBg
             setPosition(viewport.screenWidth/2F - width/2, viewport.screenHeight/2F - height/2F)
+
+            // WIN/LOSE text
+            if (gameManager.state == GameState.WIN || gameManager.state == GameState.LOSE) {
+                val statusText = if (gameManager.state == GameState.WIN) { "VICTORY" } else { "YOU DIED" }
+                val textColor = if (gameManager.state == GameState.WIN) { Color.GREEN } else { Color.RED }
+                add(Label(statusText, assetManager.uiSkin()).apply {
+                    color = textColor
+                }).expandX().top().center().pad(16F)
+                row()
+            }
 
             val levelFile = GameAssetManager.levelList.filter { file -> file.path == GameAssetManager.loadedLevelPath }
             if (gameManager.state == GameState.WIN &&

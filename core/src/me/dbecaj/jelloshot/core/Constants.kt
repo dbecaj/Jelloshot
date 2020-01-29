@@ -19,5 +19,8 @@ val Float.metersToPixels: Float
 val Float.toDegrees : Float
     get() = MathUtils.radiansToDegrees * this
 
+val Float.rgbToUnit : Float
+    get() = this / 255F
+
 val Vector3.toVector2 : Vector2
     get() = Vector2(this.x, this.y)
