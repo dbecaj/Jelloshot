@@ -31,7 +31,6 @@ class RenderingSystem @Inject constructor(private val batch: SpriteBatch,
         batch.end()
     }
 
-    var stateTime = 0.0F
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val position = entity.transform.position
 
@@ -45,16 +44,6 @@ class RenderingSystem @Inject constructor(private val batch: SpriteBatch,
 
         entity.tryGet(TextureRegionComponent)?.let { textureRegionComponent ->
             renderTextureRegion(entity, position, textureRegionComponent.textureRegion)
-        }
-
-        entity.tryGet(PlayerAnimationComponent)?.let { playerAnimationComponent ->
-            entity.tryGet(PlayerComponent)?.let { playerComponent ->
-                stateTime += deltaTime
-                val frameIndex = playerAnimationComponent.blinkingAnim.getKeyFrameIndex(stateTime)
-                val texture = playerAnimationComponent.blinkingAnim.getKeyFrame(stateTime)
-
-                renderTextureRegion(entity, position, TextureRegion(texture))
-            }
         }
     }
 

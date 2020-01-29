@@ -22,6 +22,7 @@ class GameWorld @Inject constructor(
         val bodies = mutableListOf<Body>()
         val entity = Entity().apply {
             add(PlayerAnimationComponent(assetManager.playerAnimBlinking(), assetManager.playerAgitatedSprite()))
+            add(TextureRegionComponent(assetManager.playerAgitatedSprite()))
             add(TransformComponent(position, 0F, 3F))
             add(PlayerComponent())
 

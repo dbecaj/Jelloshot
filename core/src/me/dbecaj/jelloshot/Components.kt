@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import java.util.*
 import com.badlogic.gdx.utils.Array as GdxArray
 
 fun <T : Component?> Entity.hasComponent(componentClass: Class<T>?): Boolean {
@@ -20,7 +21,7 @@ class TextureComponent(val texture: Texture) : Component {
 val Entity.texture: TextureComponent
     get() = TextureComponent[this]
 
-class TextureRegionComponent(val textureRegion: TextureRegion) : Component {
+class TextureRegionComponent(var textureRegion: TextureRegion) : Component {
     companion object : ComponentResolver<TextureRegionComponent>(TextureRegionComponent::class.java)
 }
 val Entity.textureRegion: TextureRegionComponent

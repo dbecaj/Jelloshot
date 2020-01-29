@@ -6,15 +6,15 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.World
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
-import me.dbecaj.jelloshot.PlayerComponent
+import me.dbecaj.jelloshot.*
 import me.dbecaj.jelloshot.core.*
-import me.dbecaj.jelloshot.physics
 import java.util.*
 
 @Singleton
@@ -28,7 +28,9 @@ class PlayerControllerSystem @Inject constructor(
     private var startDragPos: Vector2 = Vector2()
     private var endDragPos: Vector2 = Vector2()
     private var move: Boolean = false
+    private var isDragging = false
 
+    var stateTime = 0F
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val playerComponent = entity.getComponent(PlayerComponent::class.java)
         if (move) { //&& playerComponent.isOnGround) {
@@ -63,11 +65,29 @@ class PlayerControllerSystem @Inject constructor(
         if (gameManager.launchPower != 2F && gameManager.launchPowerChangeDate.before(Date())) {
             gameManager.launchPower = 2F
         }
+
+        // Process player sprite animations
+        entity.tryGet(PlayerAnimationComponent)?.let { playerAnimationComponent ->
+            entity.tryGet(PlayerComponent)?.let { playerComponent ->
+                stateTime += deltaTime
+                val texture = playerAnimationComponent.blinkingAnim.getKeyFrame(stateTime)
+
+                val textureRegion = entity.getComponent(TextureRegionComponent::class.java)
+                if (isDragging) {
+                    textureRegion.textureRegion = TextureRegion(playerAnimationComponent.agitatedEyes)
+                }
+                else {
+                    textureRegion.textureRegion = TextureRegion(texture)
+                }
+            }
+        }
+
     }
 
     public val playerInputAdapter = object : InputAdapter() {
         override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
             startDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
+            isDragging = true
 
             return true
         }
@@ -75,6 +95,7 @@ class PlayerControllerSystem @Inject constructor(
         override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
             endDragPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0F)).toVector2
             move = true
+            isDragging = false
 
             return true
         }
